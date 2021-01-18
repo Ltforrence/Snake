@@ -256,29 +256,57 @@ public class Board extends JPanel implements ActionListener {
         if (nextDir.peek() != null)
         {
             int nxt = nextDir.remove();
-            if(nxt == 1 && (!rightDirection)) //left
+            if(nxt == 1) //left
             {
-                leftDirection = true;
-                upDirection = false;
-                downDirection = false;
+                if(!rightDirection && !leftDirection)
+                {
+                    leftDirection = true;
+                    upDirection = false;
+                    downDirection = false;
+                }
+                else
+                {
+                    checkMovement();
+                }
             }
-            else if(nxt == 2 && (!leftDirection)) //right
+            else if(nxt == 2) //right
             {
-                rightDirection = true;
-                upDirection = false;
-                downDirection = false;
+                if((!leftDirection) && (!rightDirection))
+                {
+                    rightDirection = true;
+                    upDirection = false;
+                    downDirection = false;
+                }
+                else
+                {
+                    checkMovement();
+                }
             }
-            else if(nxt == 3 && (!downDirection)) //up
+            else if(nxt == 3) //up
             {
-                upDirection = true;
-                rightDirection = false;
-                leftDirection = false;
+                if(!downDirection && !upDirection)
+                {
+                    upDirection = true;
+                    rightDirection = false;
+                    leftDirection = false;
+                }
+                else
+                {
+                    checkMovement();
+                }
             }
-            else if(nxt == 4 && (!upDirection)) //down
+            else if(nxt == 4) //down
             {
-                downDirection = true;
-                rightDirection = false;
-                leftDirection = false;
+                if(!upDirection && !downDirection)
+                {
+                    downDirection = true;
+                    rightDirection = false;
+                    leftDirection = false;
+                }
+                else
+                {
+                    checkMovement();
+                }
             }
         }
     }
