@@ -11,9 +11,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.JButton; //Added this for the buttons and shtuff!
 import javax.swing.Timer;
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.Queue; //Added this for the nextdir queue!
+import java.util.LinkedList;//Same as above!
 
 public class Board extends JPanel implements ActionListener {
 
@@ -112,20 +113,30 @@ public class Board extends JPanel implements ActionListener {
             Toolkit.getDefaultToolkit().sync();
 
         } else {
-
+            
             gameOver(g);
+
+            
         } 
     }
 
     private void gameOver(Graphics g) {
         
         String msg = "HAHAHA LOOOOOser";
+        String msg2 = "Score: "+dots;
+
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = getFontMetrics(small);
 
         g.setColor(Color.white);
         g.setFont(small);
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
+
+        g.drawString(msg2, (B_WIDTH - metr.stringWidth(msg2)) / 2, B_HEIGHT / 2 - 24);
+
+        
+        
+
     }
 
     private void checkApple() {
@@ -188,6 +199,16 @@ public class Board extends JPanel implements ActionListener {
         
         if (!inGame) {
             timer.stop();
+            //added this stuff to allow for a new game
+            JButton button = new JButton("New Game!");
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    initBoard();
+                }
+            });
+            this.add(button);
+            this.revalidate();
         }
     }
 
