@@ -16,6 +16,11 @@ import javax.swing.Timer;
 import java.util.Queue; //Added this for the nextdir queue!
 import java.util.LinkedList;//Same as above!
 
+//lol this is dumb. I needed borders
+import javax.swing.*;
+import java.awt.*;
+import java.io.*; // for file stuff lol
+
 public class Board extends JPanel implements ActionListener {
 
     private final int B_WIDTH = 800;
@@ -48,8 +53,10 @@ public class Board extends JPanel implements ActionListener {
     private Image apple;
     private Image head;
 
+
+
     public Board() {
-        
+        register8BitFont();
         initBoard();
     }
     
@@ -136,18 +143,18 @@ public class Board extends JPanel implements ActionListener {
 
     private void gameOver(Graphics g) {
         
-        String msg = "HAHAHA LOOOOOser";
+        String msg = "Game Over";
         String msg2 = "Score: "+dots;
-
-        Font small = new Font("Helvetica", Font.BOLD, 14);
+        
+        Font small = new Font("8-BIT_WONDER", Font.BOLD, 28);
         FontMetrics metr = getFontMetrics(small);
 
-        g.setColor(Color.white);
+        g.setColor(Color.green);
         g.setFont(small);
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
 
         //28 should be double the font size and make it just doublespaced above it
-        g.drawString(msg2, (B_WIDTH - metr.stringWidth(msg2)) / 2, B_HEIGHT / 2 - 28);
+        g.drawString(msg2, (B_WIDTH - metr.stringWidth(msg2)) / 2, B_HEIGHT / 2 + 56);
 
         
         
@@ -214,8 +221,24 @@ public class Board extends JPanel implements ActionListener {
         
         if (!inGame) {
             timer.stop();
+            //Eventually I would like the user to be able to scale game size, so I would like to scale this image with the game
+            //JButton button = new JButton(new ImageIcon(((new ImageIcon("images/pic.jpg")).getImage()).getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH))); //(in one line if you want to do that later)
+            //scale images (from this thread. plus there is a link to another site in the thread I used https://stackoverflow.com/questions/2856480/resizing-a-imageicon-in-a-jbutton)
+            //ideally the restart button would be a gif of the snake goin around the screen which i would like, but that would be more effort to make that gif
+            ImageIcon icon = new ImageIcon("Images/restart.png");
+            Image img = icon.getImage() ;  
+            Image newimg = img.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ;  
+            ImageIcon icon2 = new ImageIcon("Images/restartred.png");
+            Image img2 = icon2.getImage() ;  
+            Image newimg2 = img2.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ;  
+
+            //button stuff in general https://stackoverflow.com/questions/5751311/creating-a-custom-button-in-java-with-jbutton
             //added this stuff to allow for a new game
-            JButton button = new JButton("New Game!");
+            JButton button = new JButton(new ImageIcon(newimg));
+            button.setRolloverIcon(new ImageIcon(newimg2));
+            button.setContentAreaFilled(false);
+            button.setBorder(BorderFactory.createEmptyBorder());
+            button.setFocusable(false);
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
@@ -309,6 +332,19 @@ public class Board extends JPanel implements ActionListener {
                 }
             }
         }
+    }
+
+    public void register8BitFont()
+    {
+        try {
+            GraphicsEnvironment ge = 
+                GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("Fonts/8-BIT_WONDER.ttf")));
+            System.out.println(ge.getAvailableFontFamilyNames());
+       } catch (IOException|FontFormatException e) {
+            //Handle exception
+            System.out.println("Exception");
+       }
     }
 
     private class TAdapter extends KeyAdapter {
