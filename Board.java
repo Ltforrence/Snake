@@ -33,7 +33,7 @@ public class Board extends JPanel implements ActionListener {
     private int apple_y;
 
     //adding this for better movement. This will allow users to buffer moves and once the timer is up then it will check the move that is next in the queue. If possible then it will do it and if not it will just go to next dir
-    private Queue<Integer> nextDir = new LinkedList<>();
+    private Queue<Integer> nextDir;
 
 
     private boolean leftDirection = false;
@@ -41,6 +41,7 @@ public class Board extends JPanel implements ActionListener {
     private boolean upDirection = false;
     private boolean downDirection = false;
     private boolean inGame = true;
+    private int gameNum = 0;
 
     private Timer timer;
     private Image ball;
@@ -53,8 +54,22 @@ public class Board extends JPanel implements ActionListener {
     }
     
     private void initBoard() {
+        //These need to be reset for when I restart the game
+        leftDirection = false;
+        rightDirection = true;
+        upDirection = false;
+        downDirection = false;
+        inGame = true;
+        nextDir = new LinkedList<>(); 
+        gameNum++;
 
-        addKeyListener(new TAdapter());
+        //Now onto restarting game
+        // Hahahaha I found this bug really fast which made me really happy so I am gonna spend a couple lines talking about it
+        //Basically if you allow the game to make a new key listener everytime, it adds another of the same input to the queue. Which is bad! 
+        //And the delay takes double the length.
+        //I will fix the other part of this (The fact that if you recieve the same direction twice it doesn't just pop the next thing off the queue), but this woulda caused issues in the future too. So I fixed this first
+        if(gameNum == 1)
+            addKeyListener(new TAdapter());
         setBackground(Color.black);
         setFocusable(true);
 
@@ -84,7 +99,6 @@ public class Board extends JPanel implements ActionListener {
         }
         
         locateApple();
-
         timer = new Timer(DELAY, this);
         timer.start();
     }
@@ -132,7 +146,8 @@ public class Board extends JPanel implements ActionListener {
         g.setFont(small);
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
 
-        g.drawString(msg2, (B_WIDTH - metr.stringWidth(msg2)) / 2, B_HEIGHT / 2 - 24);
+        //28 should be double the font size and make it just doublespaced above it
+        g.drawString(msg2, (B_WIDTH - metr.stringWidth(msg2)) / 2, B_HEIGHT / 2 - 28);
 
         
         
@@ -205,6 +220,7 @@ public class Board extends JPanel implements ActionListener {
                 public void actionPerformed(ActionEvent e)
                 {
                     initBoard();
+                    button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
                 }
             });
             this.add(button);
