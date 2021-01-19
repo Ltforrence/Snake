@@ -55,7 +55,7 @@ public class Board extends JPanel implements ActionListener {
 
 
 
-    public Board() {
+    public Board(int bSize, int speed, boolean border, String name) {
         register8BitFont();
         initBoard();
     }
@@ -87,13 +87,13 @@ public class Board extends JPanel implements ActionListener {
 
     private void loadImages() {
 
-        ImageIcon iid = new ImageIcon("Images/dotbig.png");
+        ImageIcon iid = new ImageIcon("Images/dotnoborder.png");
         ball = iid.getImage();
 
-        ImageIcon iia = new ImageIcon("Images/headbig.png");
+        ImageIcon iia = new ImageIcon("Images/headnoborder.png");
         apple = iia.getImage();
 
-        ImageIcon iih = new ImageIcon("Images/dotbig.png");
+        ImageIcon iih = new ImageIcon("Images/dotnoborder.png");
         head = iih.getImage();
     }
 
@@ -144,17 +144,20 @@ public class Board extends JPanel implements ActionListener {
     private void gameOver(Graphics g) {
         
         String msg = "Game Over";
-        String msg2 = "Score: "+dots;
+        String msg2 = "Score   "+dots;
         
-        Font small = new Font("8-BIT_WONDER", Font.BOLD, 28);
-        FontMetrics metr = getFontMetrics(small);
+        Font big = new Font("8BIT WONDER", Font.BOLD, 54);
+        Font small = new Font("8BIT WONDER", Font.BOLD, 27);
+        FontMetrics metr = getFontMetrics(big);
+        FontMetrics metr2 = getFontMetrics(small);
 
         g.setColor(Color.green);
-        g.setFont(small);
+        g.setFont(big);
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
 
         //28 should be double the font size and make it just doublespaced above it
-        g.drawString(msg2, (B_WIDTH - metr.stringWidth(msg2)) / 2, B_HEIGHT / 2 + 56);
+        g.setFont(small);
+        g.drawString(msg2, (B_WIDTH - metr2.stringWidth(msg2)) / 2, B_HEIGHT / 2 + 56);
 
         
         
@@ -232,6 +235,14 @@ public class Board extends JPanel implements ActionListener {
             Image img2 = icon2.getImage() ;  
             Image newimg2 = img2.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ;  
 
+
+            ImageIcon icon3 = new ImageIcon("Images/Settingsgreen.png");
+            Image img3 = icon3.getImage() ;  
+            Image newimg3 = img3.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ;  
+            ImageIcon icon4 = new ImageIcon("Images/Settingsred.png");
+            Image img4 = icon4.getImage() ;  
+            Image newimg4 = img4.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ; 
+
             //button stuff in general https://stackoverflow.com/questions/5751311/creating-a-custom-button-in-java-with-jbutton
             //added this stuff to allow for a new game
             JButton button = new JButton(new ImageIcon(newimg));
@@ -239,14 +250,34 @@ public class Board extends JPanel implements ActionListener {
             button.setContentAreaFilled(false);
             button.setBorder(BorderFactory.createEmptyBorder());
             button.setFocusable(false);
+            button.setBounds(B_WIDTH/4, 0, B_WIDTH/2, B_HEIGHT/5);
+            
+
+            JButton button2 = new JButton(new ImageIcon(newimg3));
+            button2.setRolloverIcon(new ImageIcon(newimg4));
+            button2.setContentAreaFilled(false);
+            button2.setBorder(BorderFactory.createEmptyBorder());
+            button2.setFocusable(false);
+            button2.setBounds(B_WIDTH/4, B_HEIGHT-B_HEIGHT/5, B_WIDTH/2, B_HEIGHT/5);
+            button2.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    initBoard();
+                    button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                    button2.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                }
+            });
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
                     initBoard();
                     button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                    button2.setVisible(false);
                 }
             });
+            this.setLayout(null);
             this.add(button);
+            this.add(button2);
             this.revalidate();
         }
     }
@@ -340,7 +371,6 @@ public class Board extends JPanel implements ActionListener {
             GraphicsEnvironment ge = 
                 GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("Fonts/8-BIT_WONDER.ttf")));
-            System.out.println(ge.getAvailableFontFamilyNames());
        } catch (IOException|FontFormatException e) {
             //Handle exception
             System.out.println("Exception");
