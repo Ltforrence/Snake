@@ -23,11 +23,11 @@ import java.io.*; // for file stuff lol
 
 public class Board extends JPanel implements ActionListener {
 
-    private final int B_WIDTH = 800;
-    private final int B_HEIGHT = 800;
+    private final int B_WIDTH = 300; //these are now base width and base height
+    private final int B_HEIGHT = 300; 
     private final int DOT_SIZE = 20; // made the dot half the size! just to check how shit works here
-    private final int ALL_DOTS = 1600; // now this many dots fit
-    private final int RAND_POS = 39; // Had to change this to 39 because now the board is 40 x 40
+    private final int ALL_DOTS = 225; // now this many dots fit
+    private final int RAND_POS = 14; // Had to change this to 39 because now the board is 40 x 40
     private final int DELAY = 100; //I changed this to be shorter because I assume it is what makes it go faster
 
     private final int x[] = new int[ALL_DOTS];
@@ -36,6 +36,8 @@ public class Board extends JPanel implements ActionListener {
     private int dots;
     private int apple_x;
     private int apple_y;
+    private int fullWidth;
+    private int fullHeight;
 
     //adding this for better movement. This will allow users to buffer moves and once the timer is up then it will check the move that is next in the queue. If possible then it will do it and if not it will just go to next dir
     private Queue<Integer> nextDir;
@@ -45,20 +47,27 @@ public class Board extends JPanel implements ActionListener {
     private boolean rightDirection = true;
     private boolean upDirection = false;
     private boolean downDirection = false;
-    private boolean inGame = true;
+    private boolean inGame = false;
+    private boolean inSettings = true; //out of game!
     private int gameNum = 0;
 
     private Timer timer;
     private Image ball;
     private Image apple;
     private Image head;
+    private Image img;
+    private Image img2;
+    private Image img3;
+    private Image img4;
+    private JFrame snake;
+    private int bSize;
 
-    private Dimension d = new Dimension(B_WIDTH, B_HEIGHT);
 
 
 
-    public Board(int bSize, int speed, boolean border, String name, int dAdded) {
+    public Board(Snake s) {
         register8BitFont();
+        snake = s;
 
         initSettings();
         //initBoard();
@@ -66,17 +75,25 @@ public class Board extends JPanel implements ActionListener {
 
     private void initSettings()
     {
+        inSettings = true;
         setBackground(Color.black);
         setFocusable(true);
-
-        setPreferredSize(d);
-
+        loadImages();
+        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         
-        ImageIcon icon = new ImageIcon("Images/restart.png");
-        Image img = icon.getImage() ;  
-        Image newimg = img.getScaledInstance( B_WIDTH/4, B_HEIGHT/10,  java.awt.Image.SCALE_SMOOTH ) ;  
-        ImageIcon icon2 = new ImageIcon("Images/restartred.png");
-        Image img2 = icon2.getImage() ;  
+        //These will be set by settings
+        bSize = 5; // top size
+        int speed = 10; // top speed
+        boolean border = true; //border on or off
+        String name = "Luke"; // You will be able to send in your name from the main screen too.
+        int dAdded = 1; //Dots added
+        //end of settings here
+        
+
+        fullWidth = B_WIDTH + 40*(bSize -1);
+        fullHeight = B_HEIGHT + 40*(bSize -1);
+        
+        Image newimg = img.getScaledInstance( B_WIDTH/4, B_HEIGHT/10,  java.awt.Image.SCALE_SMOOTH ) ;   
         Image newimg2 = img2.getScaledInstance( B_WIDTH/4, B_HEIGHT/10,  java.awt.Image.SCALE_SMOOTH ) ;  
 
         JButton button = new JButton(new ImageIcon(newimg));
@@ -84,30 +101,34 @@ public class Board extends JPanel implements ActionListener {
         button.setContentAreaFilled(false);
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setFocusable(false);
-        button.setBounds(B_WIDTH/128, 0, B_WIDTH/2, B_HEIGHT/2);
+        button.setBounds(B_WIDTH/4-B_WIDTH/8, B_HEIGHT/2-B_HEIGHT/10, B_WIDTH/4, B_HEIGHT/10);
 
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
-                initBoard();
                 button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                initBoard();
             }
         });
         this.setLayout(null);
         this.add(button);
+        button.setVisible(true);
         this.revalidate();
         
     }
     
     private void initBoard() {
+
         //These need to be reset for when I restart the game
         leftDirection = false;
         rightDirection = true;
         upDirection = false;
         downDirection = false;
         inGame = true;
+        inSettings = false;
         nextDir = new LinkedList<>(); 
         gameNum++;
+        this.revalidate();
 
         //Now onto restarting game
         // Hahahaha I found this bug really fast which made me really happy so I am gonna spend a couple lines talking about it
@@ -119,9 +140,10 @@ public class Board extends JPanel implements ActionListener {
         setBackground(Color.black);
         setFocusable(true);
 
-        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
+        setPreferredSize(new Dimension(fullWidth, fullHeight));
+        snake.setSize(fullWidth, fullHeight);
+        snake.pack();
         this.revalidate();
-        loadImages();
         initGame();
         
     }
@@ -136,19 +158,40 @@ public class Board extends JPanel implements ActionListener {
 
         ImageIcon iih = new ImageIcon("Images/dotnoborder.png");
         head = iih.getImage();
+
+        ImageIcon icon = new ImageIcon("Images/restart.png");
+        img = icon.getImage();  
+
+        ImageIcon icon2 = new ImageIcon("Images/restartred.png");
+        img2 = icon2.getImage(); 
+
+        ImageIcon icon3 = new ImageIcon("Images/Settingsgreen.png");
+        img3 = icon3.getImage();  
+
+        ImageIcon icon4 = new ImageIcon("Images/Settingsred.png");
+        img4 = icon4.getImage();
     }
 
     private void initGame() {
         dots = 3;
+        int start = fullHeight/2;
+        while(start%20 != 0)
+        {
+            start = start + 5; //basically just adds 5 until the starting place is a multiple of 20. There are definitely nicer ways of doing this looks wise, but this is so easy and relatively elegant
+        }
+
 
         for (int z = 0; z < dots; z++) {
-            x[z] = 400 - z * DOT_SIZE;
-            y[z] = 400;
+            x[z] = start - z * DOT_SIZE;
+            y[z] = start;
         }
         
         locateApple();
-        timer = new Timer(DELAY, this);
-        timer.start();
+        if(gameNum == 1)
+        {
+            timer = new Timer(DELAY, this);
+            timer.start();
+        }
     }
 
     @Override
@@ -174,31 +217,33 @@ public class Board extends JPanel implements ActionListener {
 
             Toolkit.getDefaultToolkit().sync();
 
-        } else {
-            
+        } 
+        else if(inSettings)
+        {
+            //for now do nothing? I will figure something out to do here. But for now we need to clear everything
+        }
+        else if(!inGame) {
             gameOver(g);
-
-            
         } 
     }
 
     private void gameOver(Graphics g) {
         
         String msg = "Game Over";
-        String msg2 = "Score   "+dots;
+        String msg2 = "Score ... "+dots;
         
-        Font big = new Font("Karmatic Arcade", Font.PLAIN, 54);
-        Font small = new Font("Karmatic Arcade", Font.PLAIN, 27);
+        Font big = new Font("Karmatic Arcade", Font.PLAIN, 20 + bSize*4);
+        Font small = new Font("Karmatic Arcade", Font.PLAIN, 10 + bSize*2);
         FontMetrics metr = getFontMetrics(big);
         FontMetrics metr2 = getFontMetrics(small);
 
         g.setColor(Color.white);
         g.setFont(big);
-        g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
+        g.drawString(msg, (fullWidth - metr.stringWidth(msg)) / 2, fullHeight / 2);
 
         //28 should be double the font size and make it just doublespaced above it
         g.setFont(small);
-        g.drawString(msg2, (B_WIDTH - metr2.stringWidth(msg2)) / 2, B_HEIGHT / 2 + 56);
+        g.drawString(msg2, (fullWidth - metr2.stringWidth(msg2)) / 2, fullHeight / 2 + 56);
 
         
         
@@ -247,7 +292,7 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
-        if (y[0] >= B_HEIGHT) {
+        if (y[0] >= fullHeight) {
             inGame = false;
         }
 
@@ -255,7 +300,7 @@ public class Board extends JPanel implements ActionListener {
             inGame = false;
         }
 
-        if (x[0] >= B_WIDTH) {
+        if (x[0] >= fullWidth) {
             inGame = false;
         }
 
@@ -264,25 +309,15 @@ public class Board extends JPanel implements ActionListener {
         }
         
         if (!inGame) {
-            timer.stop();
+            //timer.stop();
             //Eventually I would like the user to be able to scale game size, so I would like to scale this image with the game
             //JButton button = new JButton(new ImageIcon(((new ImageIcon("images/pic.jpg")).getImage()).getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH))); //(in one line if you want to do that later)
             //scale images (from this thread. plus there is a link to another site in the thread I used https://stackoverflow.com/questions/2856480/resizing-a-imageicon-in-a-jbutton)
-            //ideally the restart button would be a gif of the snake goin around the screen which i would like, but that would be more effort to make that gif
-            ImageIcon icon = new ImageIcon("Images/restart.png");
-            Image img = icon.getImage() ;  
-            Image newimg = img.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ;  
-            ImageIcon icon2 = new ImageIcon("Images/restartred.png");
-            Image img2 = icon2.getImage() ;  
-            Image newimg2 = img2.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ;  
-
-
-            ImageIcon icon3 = new ImageIcon("Images/Settingsgreen.png");
-            Image img3 = icon3.getImage() ;  
-            Image newimg3 = img3.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ;  
-            ImageIcon icon4 = new ImageIcon("Images/Settingsred.png");
-            Image img4 = icon4.getImage() ;  
-            Image newimg4 = img4.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ; 
+            //ideally the restart button would be a gif of the snake goin around the screen which i would like, but that would be more effort to make that gif 
+            Image newimg  =  img.getScaledInstance( fullWidth/2, fullHeight/5,  java.awt.Image.SCALE_SMOOTH ) ;  
+            Image newimg2 = img2.getScaledInstance( fullWidth/2, fullHeight/5,  java.awt.Image.SCALE_SMOOTH ) ;  
+            Image newimg3 = img3.getScaledInstance( fullWidth/2, fullHeight/5,  java.awt.Image.SCALE_SMOOTH ) ;    
+            Image newimg4 = img4.getScaledInstance( fullWidth/2, fullHeight/5,  java.awt.Image.SCALE_SMOOTH ) ; 
 
             //button stuff in general https://stackoverflow.com/questions/5751311/creating-a-custom-button-in-java-with-jbutton
             //added this stuff to allow for a new game
@@ -291,7 +326,7 @@ public class Board extends JPanel implements ActionListener {
             button.setContentAreaFilled(false);
             button.setBorder(BorderFactory.createEmptyBorder());
             button.setFocusable(false);
-            button.setBounds(B_WIDTH/4, 0, B_WIDTH/2, B_HEIGHT/5);
+            button.setBounds(fullWidth/4, 0, fullWidth/2, fullHeight/5);
             
 
             JButton button2 = new JButton(new ImageIcon(newimg3));
@@ -299,7 +334,7 @@ public class Board extends JPanel implements ActionListener {
             button2.setContentAreaFilled(false);
             button2.setBorder(BorderFactory.createEmptyBorder());
             button2.setFocusable(false);
-            button2.setBounds(B_WIDTH/4, B_HEIGHT-B_HEIGHT/5, B_WIDTH/2, B_HEIGHT/5);
+            button2.setBounds(fullWidth/4, fullHeight-fullHeight/5, fullWidth/2, fullHeight/5);
             button2.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {

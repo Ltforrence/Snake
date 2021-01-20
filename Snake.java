@@ -7,22 +7,19 @@ public class Snake extends JFrame {
 
     public Snake() {
         //Here is where we will ask for the stuff! then pass all that into initUI
-        int bSize = 10; // top size
-        int speed = 10; // top speed
-        boolean border = true; //border on or off
-        String name = "Luke"; // You will be able to send in your name from the main screen too.
-        int dAdded = 1;
         
-        initUI(bSize, speed, border, name, dAdded);
+        
+        initUI(this);
     }
     
     
-    private void initUI(int bSize, int speed, boolean border, String name, int dAdded) {
+    private void initUI(Snake s) {
         
-        add(new Board(bSize, speed, border, name, dAdded));
+        add(new Board(s));
         
         setResizable(false);
         pack();
+        setSize(420,420);
         
         setTitle("Snake");
         setLocationRelativeTo(null);
