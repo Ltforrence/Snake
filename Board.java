@@ -53,11 +53,50 @@ public class Board extends JPanel implements ActionListener {
     private Image apple;
     private Image head;
 
+    private Dimension d = new Dimension(B_WIDTH, B_HEIGHT);
 
 
-    public Board(int bSize, int speed, boolean border, String name) {
+
+    public Board(int bSize, int speed, boolean border, String name, int dAdded) {
         register8BitFont();
-        initBoard();
+
+        initSettings();
+        //initBoard();
+    }
+
+    private void initSettings()
+    {
+        setBackground(Color.black);
+        setFocusable(true);
+
+        setPreferredSize(d);
+
+        
+        ImageIcon icon = new ImageIcon("Images/restart.png");
+        Image img = icon.getImage() ;  
+        Image newimg = img.getScaledInstance( B_WIDTH/4, B_HEIGHT/10,  java.awt.Image.SCALE_SMOOTH ) ;  
+        ImageIcon icon2 = new ImageIcon("Images/restartred.png");
+        Image img2 = icon2.getImage() ;  
+        Image newimg2 = img2.getScaledInstance( B_WIDTH/4, B_HEIGHT/10,  java.awt.Image.SCALE_SMOOTH ) ;  
+
+        JButton button = new JButton(new ImageIcon(newimg));
+        button.setRolloverIcon(new ImageIcon(newimg2));
+        button.setContentAreaFilled(false);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFocusable(false);
+        button.setBounds(B_WIDTH/128, 0, B_WIDTH/2, B_HEIGHT/2);
+
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                initBoard();
+                button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+            }
+        });
+        this.setLayout(null);
+        this.add(button);
+        this.revalidate();
+        
     }
     
     private void initBoard() {
@@ -81,8 +120,10 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);
 
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
+        this.revalidate();
         loadImages();
         initGame();
+        
     }
 
     private void loadImages() {
@@ -146,12 +187,12 @@ public class Board extends JPanel implements ActionListener {
         String msg = "Game Over";
         String msg2 = "Score   "+dots;
         
-        Font big = new Font("8BIT WONDER", Font.BOLD, 54);
-        Font small = new Font("8BIT WONDER", Font.BOLD, 27);
+        Font big = new Font("Karmatic Arcade", Font.PLAIN, 54);
+        Font small = new Font("Karmatic Arcade", Font.PLAIN, 27);
         FontMetrics metr = getFontMetrics(big);
         FontMetrics metr2 = getFontMetrics(small);
 
-        g.setColor(Color.green);
+        g.setColor(Color.white);
         g.setFont(big);
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
 
@@ -262,7 +303,7 @@ public class Board extends JPanel implements ActionListener {
             button2.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    initBoard();
+                    initSettings();
                     button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
                     button2.setVisible(false); //gotta make it invisible so that after next game another can be added instead
                 }
@@ -289,6 +330,14 @@ public class Board extends JPanel implements ActionListener {
 
         r = (int) (Math.random() * RAND_POS);
         apple_y = ((r * DOT_SIZE));
+        //need to do this check because if you don't then you will have the apple be placed inside the snake
+        for(int z = 0; z<dots; z++)
+        {
+            if(x[z] == apple_x && y[z] == apple_y) //just looked it up because I forgot that && stopped evaluating after the first returns false which I thought it didn't do
+            {
+                locateApple();
+            }
+        }
     }
 
 
@@ -367,10 +416,12 @@ public class Board extends JPanel implements ActionListener {
 
     public void register8BitFont()
     {
+        //refd this website https://www.programcreek.com/java-api-examples/?class=java.awt.GraphicsEnvironment&method=getAvailableFontFamilyNames
+        //This tells you how to check if you actually got the font loaded
         try {
             GraphicsEnvironment ge = 
                 GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("Fonts/8-BIT_WONDER.ttf")));
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("Fonts/ka1.ttf")));
        } catch (IOException|FontFormatException e) {
             //Handle exception
             System.out.println("Exception");

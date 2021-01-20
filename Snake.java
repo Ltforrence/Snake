@@ -11,13 +11,15 @@ public class Snake extends JFrame {
         int speed = 10; // top speed
         boolean border = true; //border on or off
         String name = "Luke"; // You will be able to send in your name from the main screen too.
+        int dAdded = 1;
         
-        initUI(bSize, speed, border, name);
+        initUI(bSize, speed, border, name, dAdded);
     }
     
-    private void initUI(int bSize, int speed, boolean border, String name) {
+    
+    private void initUI(int bSize, int speed, boolean border, String name, int dAdded) {
         
-        add(new Board(bSize, speed, border, name));
+        add(new Board(bSize, speed, border, name, dAdded));
         
         setResizable(false);
         pack();
