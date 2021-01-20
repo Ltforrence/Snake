@@ -30,8 +30,8 @@ public class Board extends JPanel implements ActionListener {
     private final int RAND_POS = 14; // Had to change this to 39 because now the board is 40 x 40
     private final int DELAY = 100; //I changed this to be shorter because I assume it is what makes it go faster
 
-    private final int x[] = new int[ALL_DOTS];
-    private final int y[] = new int[ALL_DOTS];
+    private int x[];
+    private int y[];
 
     private int dots;
     private int apple_x;
@@ -61,6 +61,8 @@ public class Board extends JPanel implements ActionListener {
     private Image img4;
     private JFrame snake;
     private int bSize;
+    private int fullRand;
+    private int fullDots;
 
 
 
@@ -80,6 +82,8 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);
         loadImages();
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
+        snake.setSize(fullWidth, fullHeight);
+        snake.pack();
         
         //These will be set by settings
         bSize = 5; // top size
@@ -92,6 +96,10 @@ public class Board extends JPanel implements ActionListener {
 
         fullWidth = B_WIDTH + 40*(bSize -1);
         fullHeight = B_HEIGHT + 40*(bSize -1);
+        fullRand = RAND_POS + 2*(bSize-1);
+        fullDots = (fullRand + 1)*(fullRand+1);
+        x = new int[fullDots];
+        y = new int[fullDots];
         
         Image newimg = img.getScaledInstance( B_WIDTH/4, B_HEIGHT/10,  java.awt.Image.SCALE_SMOOTH ) ;   
         Image newimg2 = img2.getScaledInstance( B_WIDTH/4, B_HEIGHT/10,  java.awt.Image.SCALE_SMOOTH ) ;  
@@ -121,7 +129,7 @@ public class Board extends JPanel implements ActionListener {
 
         //These need to be reset for when I restart the game
         leftDirection = false;
-        rightDirection = true;
+        rightDirection = false;
         upDirection = false;
         downDirection = false;
         inGame = true;
@@ -175,9 +183,9 @@ public class Board extends JPanel implements ActionListener {
     private void initGame() {
         dots = 3;
         int start = fullHeight/2;
-        while(start%20 != 0)
+        if(start%20 != 0)
         {
-            start = start + 5; //basically just adds 5 until the starting place is a multiple of 20. There are definitely nicer ways of doing this looks wise, but this is so easy and relatively elegant
+            start = start + 10; //just adds 10 cause it has to start on a multiple of 20 or else it will die!!!
         }
 
 
@@ -261,25 +269,29 @@ public class Board extends JPanel implements ActionListener {
 
     private void move() {
 
-        for (int z = dots; z > 0; z--) {
-            x[z] = x[(z - 1)];
-            y[z] = y[(z - 1)];
-        }
+        //This if statement just checks if any direction is chosen. This will happen if the game is either paused or if it has just started
+        if(leftDirection || rightDirection || upDirection || downDirection)
+        {
+            for (int z = dots; z > 0; z--) {
+                x[z] = x[(z - 1)];
+                y[z] = y[(z - 1)];
+            }
 
-        if (leftDirection) {
-            x[0] -= DOT_SIZE;
-        }
+            if (leftDirection) {
+                x[0] -= DOT_SIZE;
+            }
 
-        if (rightDirection) {
-            x[0] += DOT_SIZE;
-        }
+            if (rightDirection) {
+                x[0] += DOT_SIZE;
+            }
 
-        if (upDirection) {
-            y[0] -= DOT_SIZE;
-        }
+            if (upDirection) {
+                y[0] -= DOT_SIZE;
+            }
 
-        if (downDirection) {
-            y[0] += DOT_SIZE;
+            if (downDirection) {
+                y[0] += DOT_SIZE;
+            }
         }
     }
 
@@ -360,10 +372,10 @@ public class Board extends JPanel implements ActionListener {
 
     private void locateApple() {
 
-        int r = (int) (Math.random() * RAND_POS);
+        int r = (int) (Math.random() * fullRand);
         apple_x = ((r * DOT_SIZE));
 
-        r = (int) (Math.random() * RAND_POS);
+        r = (int) (Math.random() * fullRand);
         apple_y = ((r * DOT_SIZE));
         //need to do this check because if you don't then you will have the apple be placed inside the snake
         for(int z = 0; z<dots; z++)
@@ -446,6 +458,14 @@ public class Board extends JPanel implements ActionListener {
                     checkMovement();
                 }
             }
+            else if(nxt == 5) //pause
+            {
+                //added this in here because if you happened to have clicked it right after you queued a move then it will just ignore the pause
+                upDirection = false;
+                downDirection = false;
+                rightDirection = false;
+                leftDirection = false;
+            }
         }
     }
 
@@ -487,6 +507,10 @@ public class Board extends JPanel implements ActionListener {
 
             if ((key == KeyEvent.VK_DOWN ||  c == 's') ) {
                 nextDir.add(4);
+            }
+            if(c == 'p')
+            {
+                nextDir.add(5);
             }
         }
     }
