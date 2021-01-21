@@ -70,6 +70,7 @@ public class Board extends JPanel implements ActionListener {
     private int bSize = 4;
     private int speed = 2;
     private int dAdded = 2;
+    private boolean border = false;
 
     private int toBeAdded = 0;
 
@@ -77,6 +78,7 @@ public class Board extends JPanel implements ActionListener {
     private JButton[] setSize = new JButton[10];
     private JButton[] setSpeed = new JButton[5];
     private JButton[] setDots = new JButton[5];
+    private JButton[] setBorder = new JButton[2];
 
 
     public Board(Snake s) {
@@ -101,7 +103,7 @@ public class Board extends JPanel implements ActionListener {
         //These will be set by settings
         //bSize = 5; // top size
         //int speed = 3; // mid speed
-        boolean border = true; //border on or off
+        //boolean border = true; //border on or off
         String name = "Luke"; // You will be able to send in your name from the main screen too.
         //int dAdded = 1; //Dots added
         //end of settings here
@@ -111,6 +113,7 @@ public class Board extends JPanel implements ActionListener {
         addSizeButtons(KA, metr);
         addSpeedButtons(KA, metr);
         addDotsButtons(KA, metr);
+        addBorderButtons(KA, metr);
         
         
         Image newimg = img5.getScaledInstance( B_WIDTH/2, B_HEIGHT/6,  java.awt.Image.SCALE_SMOOTH ) ;   
@@ -133,6 +136,8 @@ public class Board extends JPanel implements ActionListener {
                     {
                         setSpeed[i].setVisible(false);
                         setDots[i].setVisible(false);
+                        if(i<2)
+                            setBorder[i].setVisible(false);
                     }
                 }
                 button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
@@ -274,6 +279,65 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+
+    private void addBorderButtons(Font KA, FontMetrics metr)
+    { //I know for this one there are only 2 but it is still easier to not have to do this twice
+        for(int i = 0; i<2; i++)
+        {
+            String text = "";
+            if(i == 0)
+                text = "Connected";
+            else
+                text = "Unconnected";
+
+            setBorder[i] = new JButton(text);
+
+            setBorder[i].setContentAreaFilled(false);
+            setBorder[i].setBorder(BorderFactory.createEmptyBorder());
+            setBorder[i].setFocusable(false);
+
+
+            setBorder[i].setFont(KA);
+            
+            setBorder[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(text)/2, 310, metr.stringWidth(text), 20);
+
+            this.add(setBorder[i]);
+            setBorder[i].setVisible(true);
+
+            
+        }
+        if(border)
+        {
+            setBorder[0].setForeground(Color.white);
+            setBorder[1].setForeground(Color.green);
+        }
+        else
+        {
+            setBorder[0].setForeground(Color.green);
+            setBorder[1].setForeground(Color.white);
+        }
+        setBorder[0].addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                setBorder[1].setForeground(Color.white);
+                border =false;
+                setBorder[0].setForeground(Color.green);
+                
+            }
+        });
+        setBorder[1].addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                setBorder[0].setForeground(Color.white);
+                border =true;
+                setBorder[1].setForeground(Color.green);
+                
+            }
+        });
+
+
+    }
+
     private void setVals()
     {
         fullWidth = 300 + 40*(bSize);
@@ -298,12 +362,9 @@ public class Board extends JPanel implements ActionListener {
         nextDir = new LinkedList<>(); 
         gameNum++;
         this.revalidate();
+        loadImages(); //reload images because settings have been set now!
 
-        //Now onto restarting game
-        // Hahahaha I found this bug really fast which made me really happy so I am gonna spend a couple lines talking about it
-        //Basically if you allow the game to make a new key listener everytime, it adds another of the same input to the queue. Which is bad! 
-        //And the delay takes double the length.
-        //I will fix the other part of this (The fact that if you recieve the same direction twice it doesn't just pop the next thing off the queue), but this woulda caused issues in the future too. So I fixed this first
+        
         if(gameNum == 1)
             addKeyListener(new TAdapter());
         setBackground(Color.black);
@@ -319,14 +380,31 @@ public class Board extends JPanel implements ActionListener {
 
     private void loadImages() {
 
-        ImageIcon iid = new ImageIcon("Images/dotnoborder.png");
-        ball = iid.getImage();
+        if(border)
+        {
+            ImageIcon iid = new ImageIcon("Images/dotnoborder.png");
+            ball = iid.getImage();
 
-        ImageIcon iia = new ImageIcon("Images/headnoborder.png");
-        apple = iia.getImage();
+            ImageIcon iih = new ImageIcon("Images/dotnoborder.png");
+            head = iih.getImage();
 
-        ImageIcon iih = new ImageIcon("Images/dotnoborder.png");
-        head = iih.getImage();
+            ImageIcon iia = new ImageIcon("Images/headnoborder.png");
+            apple = iia.getImage();
+        }
+        else
+        {
+            ImageIcon iid = new ImageIcon("Images/dotbig.png");
+            ball = iid.getImage();
+
+            ImageIcon iih = new ImageIcon("Images/dotbig.png");
+            head = iih.getImage();
+
+            ImageIcon iia = new ImageIcon("Images/headbig.png");
+            apple = iia.getImage();
+
+        }
+
+        
 
         ImageIcon icon = new ImageIcon("Images/restart.png");
         img = icon.getImage();  
