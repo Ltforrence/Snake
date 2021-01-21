@@ -69,11 +69,14 @@ public class Board extends JPanel implements ActionListener {
 
     private int bSize = 4;
     private int speed = 2;
+    private int dAdded = 2;
+
+    private int toBeAdded = 0;
 
     //buttons
     private JButton[] setSize = new JButton[10];
     private JButton[] setSpeed = new JButton[5];
-
+    private JButton[] setDots = new JButton[5];
 
 
     public Board(Snake s) {
@@ -97,16 +100,17 @@ public class Board extends JPanel implements ActionListener {
 
         //These will be set by settings
         //bSize = 5; // top size
-        int speed = 3; // mid speed
+        //int speed = 3; // mid speed
         boolean border = true; //border on or off
         String name = "Luke"; // You will be able to send in your name from the main screen too.
-        int dAdded = 1; //Dots added
+        //int dAdded = 1; //Dots added
         //end of settings here
         Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
         FontMetrics metr = getFontMetrics(KA);
 
         addSizeButtons(KA, metr);
         addSpeedButtons(KA, metr);
+        addDotsButtons(KA, metr);
         
         
         Image newimg = img5.getScaledInstance( B_WIDTH/2, B_HEIGHT/6,  java.awt.Image.SCALE_SMOOTH ) ;   
@@ -128,6 +132,7 @@ public class Board extends JPanel implements ActionListener {
                     if(i<5)
                     {
                         setSpeed[i].setVisible(false);
+                        setDots[i].setVisible(false);
                     }
                 }
                 button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
@@ -184,6 +189,47 @@ public class Board extends JPanel implements ActionListener {
             });
         }
     
+    }
+
+    private void addDotsButtons(Font KA, FontMetrics metr)
+    {
+        for(int i = 0; i<5; i++)
+        {
+            setDots[i] = new JButton(""+i);
+            setDots[i].setContentAreaFilled(false);
+            setDots[i].setBorder(BorderFactory.createEmptyBorder());
+            setDots[i].setFocusable(false);
+
+            //this is pretty nice tbh
+            setDots[i].putClientProperty("dots", i );
+
+            String num = ""+(i+1);
+            setDots[i].setFont(KA);
+            if(dAdded == i)
+            {
+                setDots[i].setForeground(Color.green);
+            }
+            else
+            {
+                setDots[i].setForeground(Color.white);
+            }
+
+            setDots[i].setText(num);
+            setDots[i].setBounds(B_WIDTH/40 * (4*i + 12), 260, metr.stringWidth(num), 20);
+
+            this.add(setDots[i]);
+            setDots[i].setVisible(true);
+
+            setDots[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    setDots[dAdded].setForeground(Color.white);
+                    // From this stackoverflow article https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
+                    dAdded = (Integer)((JButton)e.getSource()).getClientProperty( "dots" );
+                    setDots[dAdded].setForeground(Color.green);         
+                }
+            });
+        }
     }
 
     private void addSpeedButtons(Font KA, FontMetrics metr)
@@ -319,8 +365,13 @@ public class Board extends JPanel implements ActionListener {
         if(gameNum == 1)
         {
             timer = new Timer(fullSpeed, this);
-            timer.start();
         }
+        else
+        {
+            timer.setDelay(fullSpeed);
+        }
+        timer.start();
+
     }
 
     @Override
@@ -369,6 +420,9 @@ public class Board extends JPanel implements ActionListener {
         String sp = "Speed";
         g.drawString(sp, (B_WIDTH - metr2.stringWidth(sp)) / 2, 130);
 
+        String d = "Dots";
+        g.drawString(d, (B_WIDTH - metr2.stringWidth(d)) / 2, 230);
+
         
     }
 
@@ -399,7 +453,8 @@ public class Board extends JPanel implements ActionListener {
 
         if ((x[0] == apple_x) && (y[0] == apple_y)) {
 
-            dots++;
+            //dots = dots;
+            toBeAdded = dAdded+1; // if we don't do this, it adds all dots at once which causes issues. 
             locateApple();
         }
     }
@@ -409,6 +464,14 @@ public class Board extends JPanel implements ActionListener {
         //This if statement just checks if any direction is chosen. This will happen if the game is either paused or if it has just started
         if(leftDirection || rightDirection || upDirection || downDirection)
         {
+            
+            
+            if(toBeAdded !=0)
+            {
+                toBeAdded--;
+                dots++;
+            }
+
             for (int z = dots; z > 0; z--) {
                 x[z] = x[(z - 1)];
                 y[z] = y[(z - 1)];
