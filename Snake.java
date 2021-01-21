@@ -19,7 +19,6 @@ public class Snake extends JFrame {
         
         setResizable(false);
         pack();
-        setSize(420,420);
         
         setTitle("Snake");
         setLocationRelativeTo(null);

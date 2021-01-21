@@ -23,10 +23,10 @@ import java.io.*; // for file stuff lol
 
 public class Board extends JPanel implements ActionListener {
 
-    private final int B_WIDTH = 300; //these are now base width and base height
-    private final int B_HEIGHT = 300; 
+    private final int B_WIDTH = 460; //these are now base width and base height
+    private final int B_HEIGHT = 460; 
     private final int DOT_SIZE = 20; // made the dot half the size! just to check how shit works here
-    private final int ALL_DOTS = 225; // now this many dots fit
+    private final int ALL_DOTS = 225; // now this many dots will fit. This is now defunct but I leave it here for now
     private final int RAND_POS = 14; // Had to change this to 39 because now the board is 40 x 40
     private final int DELAY = 100; //I changed this to be shorter because I assume it is what makes it go faster
 
@@ -59,11 +59,20 @@ public class Board extends JPanel implements ActionListener {
     private Image img2;
     private Image img3;
     private Image img4;
+    private Image img5;
+    private Image img6;
     private JFrame snake;
-    private int bSize;
     private int fullRand;
     private int fullDots;
+    private int fullSpeed;
 
+
+    private int bSize = 4;
+    private int speed = 2;
+
+    //buttons
+    private JButton[] setSize = new JButton[10];
+    private JButton[] setSpeed = new JButton[5];
 
 
 
@@ -82,40 +91,49 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);
         loadImages();
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
-        snake.setSize(fullWidth, fullHeight);
+        snake.setSize(B_WIDTH, B_HEIGHT);
         snake.pack();
         
+
         //These will be set by settings
-        bSize = 5; // top size
-        int speed = 10; // top speed
+        //bSize = 5; // top size
+        int speed = 3; // mid speed
         boolean border = true; //border on or off
         String name = "Luke"; // You will be able to send in your name from the main screen too.
         int dAdded = 1; //Dots added
         //end of settings here
-        
+        Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
+        FontMetrics metr = getFontMetrics(KA);
 
-        fullWidth = B_WIDTH + 40*(bSize -1);
-        fullHeight = B_HEIGHT + 40*(bSize -1);
-        fullRand = RAND_POS + 2*(bSize-1);
-        fullDots = (fullRand + 1)*(fullRand+1);
-        x = new int[fullDots];
-        y = new int[fullDots];
+        addSizeButtons(KA, metr);
+        addSpeedButtons(KA, metr);
         
-        Image newimg = img.getScaledInstance( B_WIDTH/4, B_HEIGHT/10,  java.awt.Image.SCALE_SMOOTH ) ;   
-        Image newimg2 = img2.getScaledInstance( B_WIDTH/4, B_HEIGHT/10,  java.awt.Image.SCALE_SMOOTH ) ;  
+        
+        Image newimg = img5.getScaledInstance( B_WIDTH/2, B_HEIGHT/6,  java.awt.Image.SCALE_SMOOTH ) ;   
+        Image newimg2 = img6.getScaledInstance( B_WIDTH/2, B_HEIGHT/6,  java.awt.Image.SCALE_SMOOTH ) ;  
 
         JButton button = new JButton(new ImageIcon(newimg));
         button.setRolloverIcon(new ImageIcon(newimg2));
         button.setContentAreaFilled(false);
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setFocusable(false);
-        button.setBounds(B_WIDTH/4-B_WIDTH/8, B_HEIGHT/2-B_HEIGHT/10, B_WIDTH/4, B_HEIGHT/10);
+        button.setBounds(B_WIDTH/2-B_WIDTH/4, B_HEIGHT-B_HEIGHT/5, B_WIDTH/2, B_HEIGHT/6);
 
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
+                for(int i = 0; i<10; i++)
+                {
+                    setSize[i].setVisible(false);
+                    if(i<5)
+                    {
+                        setSpeed[i].setVisible(false);
+                    }
+                }
                 button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                setVals();
                 initBoard();
+
             }
         });
         this.setLayout(null);
@@ -124,8 +142,105 @@ public class Board extends JPanel implements ActionListener {
         this.revalidate();
         
     }
+
+    private void addSizeButtons(Font KA, FontMetrics metr)
+    {
+        for(int i = 0; i<10; i++)
+        {
+            setSize[i] = new JButton(""+i);
+            setSize[i].setContentAreaFilled(false);
+            setSize[i].setBorder(BorderFactory.createEmptyBorder());
+            setSize[i].setFocusable(false);
+
+            //this is pretty nice tbh
+            setSize[i].putClientProperty("size", i );
+
+            String num = ""+(i+1);
+            setSize[i].setFont(KA);
+            if(bSize == i)
+            {
+                setSize[i].setForeground(Color.green);
+            }
+            else
+            {
+                setSize[i].setForeground(Color.white);
+            }
+
+            setSize[i].setText(num);
+            setSize[i].setBounds(B_WIDTH/40 * (3*i + 6), 60, metr.stringWidth(num), 20);
+
+            this.add(setSize[i]);
+            setSize[i].setVisible(true);
+
+            setSize[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    setSize[bSize].setForeground(Color.white);
+                    // From this stackoverflow article https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
+                    bSize = (Integer)((JButton)e.getSource()).getClientProperty( "size" );
+                    setSize[bSize].setForeground(Color.green);
+                    
+                }
+            });
+        }
+    
+    }
+
+    private void addSpeedButtons(Font KA, FontMetrics metr)
+    {
+        for(int i = 0; i<5; i++)
+        {
+            setSpeed[i] = new JButton(""+i);
+            setSpeed[i].setContentAreaFilled(false);
+            setSpeed[i].setBorder(BorderFactory.createEmptyBorder());
+            setSpeed[i].setFocusable(false);
+
+            //this is pretty nice tbh
+            setSpeed[i].putClientProperty("speed", i );
+
+            String num = ""+(i+1);
+            setSpeed[i].setFont(KA);
+            if(speed == i)
+            {
+                setSpeed[i].setForeground(Color.green);
+            }
+            else
+            {
+                setSpeed[i].setForeground(Color.white);
+            }
+
+            setSpeed[i].setText(num);
+            setSpeed[i].setBounds(B_WIDTH/40 * (4*i + 12), 160, metr.stringWidth(num), 20);
+
+            this.add(setSpeed[i]);
+            setSpeed[i].setVisible(true);
+
+            setSpeed[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    setSpeed[speed].setForeground(Color.white);
+                    // From this stackoverflow article https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
+                    speed = (Integer)((JButton)e.getSource()).getClientProperty( "speed" );
+                    setSpeed[speed].setForeground(Color.green);
+                    
+                }
+            });
+        }
+    }
+
+    private void setVals()
+    {
+        fullWidth = 300 + 40*(bSize);
+        fullHeight = 300 + 40*(bSize);
+        fullRand = RAND_POS + 2*(bSize);
+        fullDots = (fullRand + 1)*(fullRand+1);
+        fullSpeed = 140 - speed*20;
+        x = new int[fullDots];
+        y = new int[fullDots];
+    }
     
     private void initBoard() {
+        
 
         //These need to be reset for when I restart the game
         leftDirection = false;
@@ -178,6 +293,12 @@ public class Board extends JPanel implements ActionListener {
 
         ImageIcon icon4 = new ImageIcon("Images/Settingsred.png");
         img4 = icon4.getImage();
+
+        ImageIcon icon5 = new ImageIcon("Images/startgreen.png");
+        img5 = icon5.getImage();  
+
+        ImageIcon icon6 = new ImageIcon("Images/startred.png");
+        img6 = icon6.getImage();
     }
 
     private void initGame() {
@@ -197,7 +318,7 @@ public class Board extends JPanel implements ActionListener {
         locateApple();
         if(gameNum == 1)
         {
-            timer = new Timer(DELAY, this);
+            timer = new Timer(fullSpeed, this);
             timer.start();
         }
     }
@@ -205,7 +326,6 @@ public class Board extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         doDrawing(g);
     }
     
@@ -229,10 +349,27 @@ public class Board extends JPanel implements ActionListener {
         else if(inSettings)
         {
             //for now do nothing? I will figure something out to do here. But for now we need to clear everything
+            drawSettings(g);
         }
         else if(!inGame) {
             gameOver(g);
         } 
+    }
+
+    private void drawSettings(Graphics g)
+    {
+
+        Font big = new Font("Karmatic Arcade", Font.PLAIN, 30);
+        FontMetrics metr2 = getFontMetrics(big);
+        String si = "Size";
+        g.setColor(Color.white);
+        g.setFont(big);
+        g.drawString(si, (B_WIDTH - metr2.stringWidth(si)) / 2, 30); //30 is where it puts the middle of the string vertical wise. Only needs to be 15 I guess?
+
+        String sp = "Speed";
+        g.drawString(sp, (B_WIDTH - metr2.stringWidth(sp)) / 2, 130);
+
+        
     }
 
     private void gameOver(Graphics g) {
