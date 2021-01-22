@@ -76,6 +76,8 @@ public class Board extends JPanel implements ActionListener {
     private JButton[] setDots = new JButton[5];
     private JButton[] setBorder = new JButton[2];
     private JButton[] moreSettings = new JButton[2];
+    private JButton startSettings; //this is the start button in settings
+    private JButton gSettings; //settings button in graphics settings
 
 
 
@@ -99,6 +101,7 @@ public class Board extends JPanel implements ActionListener {
 
     private void initTitle()
     {
+        inSettings = false; //in case were coming from settings
         inMain = true; //just setting us in main screen so we can draw the main shtuff!
         setBackground(Color.black);
         setFocusable(true);
@@ -106,7 +109,6 @@ public class Board extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         snake.setSize(B_WIDTH, B_HEIGHT);
         snake.pack();
-
 
 
         Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
@@ -132,8 +134,6 @@ public class Board extends JPanel implements ActionListener {
             this.setLayout(null);
             this.add(button2);
             this.revalidate();
-        
-
     }
 
 
@@ -141,6 +141,7 @@ public class Board extends JPanel implements ActionListener {
     private void initSettings()
     {
         inMain = false;
+        inGraphicsSettings = false;
         inSettings = true;
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         snake.setSize(B_WIDTH, B_HEIGHT);
@@ -160,21 +161,21 @@ public class Board extends JPanel implements ActionListener {
         addSizeButtons(KA, metr);
         addSpeedButtons(KA, metr);
         addDotsButtons(KA, metr);
-        addBorderButtons(KA, metr);
+        addScreenButtons(KA, metr); //changing screen buttons? idk 
         
         
         Image newimg = img5.getScaledInstance( B_WIDTH/2, B_HEIGHT/6,  java.awt.Image.SCALE_SMOOTH ) ;   
         Image newimg2 = img6.getScaledInstance( B_WIDTH/2, B_HEIGHT/6,  java.awt.Image.SCALE_SMOOTH ) ;  
 
-        JButton button = new JButton(new ImageIcon(newimg));
-        button.setRolloverIcon(new ImageIcon(newimg2));
-        button.setContentAreaFilled(false);
-        button.setBorder(BorderFactory.createEmptyBorder());
-        button.setFocusable(false);
-        button.setBounds(B_WIDTH/2-B_WIDTH/4, B_HEIGHT-B_HEIGHT/5, B_WIDTH/2, B_HEIGHT/6);
+        startSettings = new JButton(new ImageIcon(newimg));
+        startSettings.setRolloverIcon(new ImageIcon(newimg2));
+        startSettings.setContentAreaFilled(false);
+        startSettings.setBorder(BorderFactory.createEmptyBorder());
+        startSettings.setFocusable(false);
+        startSettings.setBounds(B_WIDTH/2-B_WIDTH/4, B_HEIGHT-B_HEIGHT/5, B_WIDTH/2, B_HEIGHT/6);
 
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
+        startSettings.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) // @HERE: I need to make most of this a method since it there are 3 different button that clear all this
             {
                 for(int i = 0; i<10; i++)
                 {
@@ -184,20 +185,171 @@ public class Board extends JPanel implements ActionListener {
                         setSpeed[i].setVisible(false);
                         setDots[i].setVisible(false);
                         if(i<2)
-                            setBorder[i].setVisible(false);
+                        {
+                            //setBorder[i].setVisible(false); not in this anymore!
+                            moreSettings[i].setVisible(false);
+                        }
                     }
                 }
-                button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
                 setVals();
                 initBoard();
 
             }
         });
         this.setLayout(null);
-        this.add(button);
-        button.setVisible(true);
+        this.add(startSettings);
+        startSettings.setVisible(true);
         this.revalidate();
         
+    }
+
+    private void initGraphicsSettings()
+    {
+        inGraphicsSettings = true;
+        inSettings = false;
+
+        Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
+        FontMetrics metr = getFontMetrics(KA);
+
+
+        String text = "< Settings";
+
+        gSettings = new JButton(text);
+
+        gSettings.setContentAreaFilled(false);
+        gSettings.setBorder(BorderFactory.createEmptyBorder());
+        gSettings.setFocusable(false);
+
+        gSettings.setFont(KA);
+        
+        gSettings.setBounds(B_WIDTH/4 - metr.stringWidth(text)/2, 310, metr.stringWidth(text), 20);
+
+        gSettings.setForeground(Color.white);
+
+        this.add(gSettings);
+        gSettings.setVisible(true);
+
+        gSettings.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                gSettings.setForeground(Color.green);
+
+            }
+        
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                gSettings.setForeground(Color.white);
+            }
+            });
+
+            
+        
+        gSettings.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                //need to kill everything currently open 
+                gSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                inGraphicsSettings = false;
+                setVals();
+                initSettings();
+            }
+        });
+
+    }
+
+
+
+    private void addScreenButtons(Font KA, FontMetrics metr)
+    {
+        //I know for this one there are only 2 but it is still easier to not have to do this twice
+        for(int i = 0; i<2; i++)
+        {
+            String text = "";
+            if(i == 0)
+                text = "< Title";
+            else
+                text = "Visual >";
+
+            moreSettings[i] = new JButton(text);
+
+            moreSettings[i].setContentAreaFilled(false);
+            moreSettings[i].setBorder(BorderFactory.createEmptyBorder());
+            moreSettings[i].setFocusable(false);
+
+            moreSettings[i].putClientProperty("num", i );
+
+
+            moreSettings[i].setFont(KA);
+            
+            moreSettings[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(text)/2, 310, metr.stringWidth(text), 20);
+
+            moreSettings[i].setForeground(Color.white);
+
+            this.add(moreSettings[i]);
+            moreSettings[i].setVisible(true);
+
+            moreSettings[i].addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    int j = (Integer)((JButton)evt.getSource()).getClientProperty( "num" );
+                    moreSettings[j].setForeground(Color.green);
+
+                }
+            
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    int j = (Integer)((JButton)evt.getSource()).getClientProperty( "num" );
+                    moreSettings[j].setForeground(Color.white);
+                }
+            });
+
+            
+        }
+        
+        moreSettings[0].addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                //need to kill everything currently open 
+                for(int i = 0; i<10; i++)
+                {
+                    setSize[i].setVisible(false);
+                    if(i<5)
+                    {
+                        setSpeed[i].setVisible(false);
+                        setDots[i].setVisible(false);
+                        if(i<2)
+                        {
+                            //setBorder[i].setVisible(false);
+                            moreSettings[i].setVisible(false);
+                        }
+                    }
+                }
+                startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                setVals();
+                initTitle();
+            }
+        });
+        moreSettings[1].addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                //need to kill everything currently open 
+                for(int i = 0; i<10; i++)
+                {
+                    setSize[i].setVisible(false);
+                    if(i<5)
+                    {
+                        setSpeed[i].setVisible(false);
+                        setDots[i].setVisible(false);
+                        if(i<2)
+                        {
+                            //setBorder[i].setVisible(false);
+                            moreSettings[i].setVisible(false);
+                        }
+                    }
+                }
+                startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                setVals();
+                initGraphicsSettings();//only difference from above. Coulda put this in the for loop lol
+            }
+        });
+
     }
 
     private void addSizeButtons(Font KA, FontMetrics metr)
@@ -851,7 +1003,7 @@ public class Board extends JPanel implements ActionListener {
         try {
             GraphicsEnvironment ge = 
                 GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("Fonts/ka1.ttf")));
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("Fonts/KarmaticArcade.ttf"))); //I really did just edit this font so I could use it still lol. 
        } catch (IOException|FontFormatException e) {
             //Handle exception
             System.out.println("Exception");
