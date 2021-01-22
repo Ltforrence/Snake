@@ -48,7 +48,9 @@ public class Board extends JPanel implements ActionListener {
     private boolean upDirection = false;
     private boolean downDirection = false;
     private boolean inGame = false;
-    private boolean inSettings = true; //out of game!
+    private boolean inMain = false;
+    private boolean inSettings = false; //out of game!
+    private boolean inGraphicsSettings = false;
     private int gameNum = 0;
 
     private Timer timer;
@@ -66,12 +68,6 @@ public class Board extends JPanel implements ActionListener {
     private int fullDots;
     private int fullSpeed;
 
-
-    private int bSize = 4;
-    private int speed = 2;
-    private int dAdded = 2;
-    private boolean border = false;
-
     private int toBeAdded = 0;
 
     //buttons
@@ -79,22 +75,51 @@ public class Board extends JPanel implements ActionListener {
     private JButton[] setSpeed = new JButton[5];
     private JButton[] setDots = new JButton[5];
     private JButton[] setBorder = new JButton[2];
+    private JButton[] moreSettings = new JButton[2];
+
+
+
+    //User Settings
+    private int bSize = 4;
+    private int speed = 2;
+    private int dAdded = 2;
+    private boolean border = false;
+    private String name = "";
+
 
 
     public Board(Snake s) {
         register8BitFont();
         snake = s;
 
-        initSettings();
+        initTitle();
+        //initSettings();
         //initBoard();
     }
+
+    private void initTitle()
+    {
+        inMain = true; //just setting us in main screen so we can draw the main shtuff!
+        setBackground(Color.black);
+        setFocusable(true);
+        loadImages();
+        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
+        snake.setSize(B_WIDTH, B_HEIGHT);
+        snake.pack();
+
+
+
+        Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
+        FontMetrics metr = getFontMetrics(KA);
+
+        
+    }
+
+
 
     private void initSettings()
     {
         inSettings = true;
-        setBackground(Color.black);
-        setFocusable(true);
-        loadImages();
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         snake.setSize(B_WIDTH, B_HEIGHT);
         snake.pack();
@@ -104,7 +129,7 @@ public class Board extends JPanel implements ActionListener {
         //bSize = 5; // top size
         //int speed = 3; // mid speed
         //boolean border = true; //border on or off
-        String name = "Luke"; // You will be able to send in your name from the main screen too.
+         // You will be able to send in your name from the main screen too.
         //int dAdded = 1; //Dots added
         //end of settings here
         Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
@@ -426,7 +451,8 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void initGame() {
-        dots = 3;
+        dots = 1;
+        toBeAdded = 2; //so this is just so that you can go any direction to start!
         int start = fullHeight/2;
         if(start%20 != 0)
         {
@@ -480,9 +506,55 @@ public class Board extends JPanel implements ActionListener {
             //for now do nothing? I will figure something out to do here. But for now we need to clear everything
             drawSettings(g);
         }
+        else if(inGraphicsSettings)
+        {
+            drawGraphicsSettings(g);
+        }
+        else if(inMain)
+        {
+            drawMain(g);
+        }
         else if(!inGame) {
             gameOver(g);
         } 
+    }
+    private void drawMain(Graphics g)
+    {
+        Font big = new Font("Karmatic Arcade", Font.PLAIN, 70);
+        FontMetrics metr = getFontMetrics(big);
+        String s = "Snake!";
+
+        g.setColor(Color.green);
+        g.setFont(big);
+        g.drawString(s, (B_WIDTH - metr.stringWidth(s)) / 2, 90); 
+
+        Font small = new Font("Karmatic Arcade", Font.PLAIN, 30);
+        FontMetrics metr2 = getFontMetrics(small);
+        String n = "Hello ";
+        if(name == "")
+        {
+            n = "Enter Name";
+        }
+        g.setColor(Color.white);
+        g.setFont(small);
+        g.drawString(n, (B_WIDTH - metr2.stringWidth(n)) / 2, 200); 
+
+    }
+
+    private void drawGraphicsSettings(Graphics g)
+    {
+        Font big = new Font("Karmatic Arcade", Font.PLAIN, 30);
+        FontMetrics metr2 = getFontMetrics(big);
+        String si = "Size";
+        g.setColor(Color.white);
+        g.setFont(big);
+        g.drawString(si, (B_WIDTH - metr2.stringWidth(si)) / 2, 30); //30 is where it puts the middle of the string vertical wise. Only needs to be 15 I guess?
+
+        String sp = "Speed";
+        g.drawString(sp, (B_WIDTH - metr2.stringWidth(sp)) / 2, 130);
+
+        String d = "Dots";
+        g.drawString(d, (B_WIDTH - metr2.stringWidth(d)) / 2, 230);
     }
 
     private void drawSettings(Graphics g)
