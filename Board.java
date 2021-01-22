@@ -111,8 +111,10 @@ public class Board extends JPanel implements ActionListener {
 
         Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
         FontMetrics metr = getFontMetrics(KA);
-
         
+        
+        
+
     }
 
 
@@ -129,7 +131,7 @@ public class Board extends JPanel implements ActionListener {
         //bSize = 5; // top size
         //int speed = 3; // mid speed
         //boolean border = true; //border on or off
-         // You will be able to send in your name from the main screen too.
+        //You will be able to send in your name from the main screen too.
         //int dAdded = 1; //Dots added
         //end of settings here
         Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
