@@ -112,7 +112,26 @@ public class Board extends JPanel implements ActionListener {
         Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
         FontMetrics metr = getFontMetrics(KA);
         
-        
+        Image newimg3 = img3.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ;    
+        Image newimg4 = img4.getScaledInstance( B_WIDTH/2, B_HEIGHT/5,  java.awt.Image.SCALE_SMOOTH ) ;
+
+
+        JButton button2 = new JButton(new ImageIcon(newimg3));
+            button2.setRolloverIcon(new ImageIcon(newimg4));
+            button2.setContentAreaFilled(false);
+            button2.setBorder(BorderFactory.createEmptyBorder());
+            button2.setFocusable(false);
+            button2.setBounds(B_WIDTH/4, B_HEIGHT-B_HEIGHT/5, B_WIDTH/2, B_HEIGHT/5);
+            button2.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    initSettings();
+                    button2.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                }
+            });
+            this.setLayout(null);
+            this.add(button2);
+            this.revalidate();
         
 
     }
@@ -121,6 +140,7 @@ public class Board extends JPanel implements ActionListener {
 
     private void initSettings()
     {
+        inMain = false;
         inSettings = true;
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         snake.setSize(B_WIDTH, B_HEIGHT);
@@ -402,6 +422,9 @@ public class Board extends JPanel implements ActionListener {
         snake.pack();
         this.revalidate();
         initGame();
+        
+
+
         
     }
 
