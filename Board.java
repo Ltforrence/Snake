@@ -300,55 +300,37 @@ public class Board extends JPanel implements ActionListener {
                 }
             });
 
-            
+            moreSettings[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+
+                    int j = (Integer)((JButton)e.getSource()).getClientProperty( "num" );
+                    //need to kill everything currently open 
+                    for(int i = 0; i<10; i++)
+                    {
+                        setSize[i].setVisible(false);
+                        if(i<5)
+                        {
+                            setSpeed[i].setVisible(false);
+                            setDots[i].setVisible(false);
+                            if(i<2)
+                            {
+                                //setBorder[i].setVisible(false);
+                                moreSettings[i].setVisible(false);
+                            }
+                        }
+                    }
+                    startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                    setVals();
+                    if(j == 0)
+                        initTitle();
+                    else
+                        initGraphicsSettings();//only difference from above. Coulda put this in the for loop lol
+                }
+            });
         }
         
-        moreSettings[0].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                //need to kill everything currently open 
-                for(int i = 0; i<10; i++)
-                {
-                    setSize[i].setVisible(false);
-                    if(i<5)
-                    {
-                        setSpeed[i].setVisible(false);
-                        setDots[i].setVisible(false);
-                        if(i<2)
-                        {
-                            //setBorder[i].setVisible(false);
-                            moreSettings[i].setVisible(false);
-                        }
-                    }
-                }
-                startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
-                setVals();
-                initTitle();
-            }
-        });
-        moreSettings[1].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                //need to kill everything currently open 
-                for(int i = 0; i<10; i++)
-                {
-                    setSize[i].setVisible(false);
-                    if(i<5)
-                    {
-                        setSpeed[i].setVisible(false);
-                        setDots[i].setVisible(false);
-                        if(i<2)
-                        {
-                            //setBorder[i].setVisible(false);
-                            moreSettings[i].setVisible(false);
-                        }
-                    }
-                }
-                startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
-                setVals();
-                initGraphicsSettings();//only difference from above. Coulda put this in the for loop lol
-            }
-        });
+        
 
     }
 
