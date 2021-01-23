@@ -76,8 +76,13 @@ public class Board extends JPanel implements ActionListener {
     private JButton[] setDots = new JButton[5];
     private JButton[] setBorder = new JButton[2];
     private JButton[] moreSettings = new JButton[2];
+    private JButton[] colorButtons = new JButton[2]; // just 2 for now but will add more soon!
     private JButton startSettings; //this is the start button in settings
     private JButton gSettings; //settings button in graphics settings
+
+    //wanted to do this as an enum but no way to get string values in that case :(
+    private String[] colorOptions = {"Green", "Orange"}; //need to make these custom objects I guess? not 100 percent though lol. Then I can pass it into the button and have the object also contain the color object? maybe I could just make this whole thing a dict/hash table there are better ways than what I am doing.
+    private String[][] snakeImages = {{"Images/dotbig.png", "Images/orangedot.png"},{"Images/dotnoborder.png","Images/orangedot2.png"}};
 
 
 
@@ -86,7 +91,10 @@ public class Board extends JPanel implements ActionListener {
     private int speed = 2;
     private int dAdded = 2;
     private boolean border = false;
+    private int borderInt = 0;
     private String name = "";
+    private Color mainColor = Color.green;
+    private int mainColorInt = 0; //if this were better coded I wouldn't need this, but I do right now!!!! Ugh hopefully this will not be here forever
 
 
 
@@ -208,10 +216,16 @@ public class Board extends JPanel implements ActionListener {
     {
         inGraphicsSettings = true;
         inSettings = false;
+        //if you don't add the next 3 lines it wont change the top line to say color lol. Some sort of java compiler issue goin on here. Never seen this before.
+        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
+        snake.setSize(B_WIDTH, B_HEIGHT);
+        snake.pack();
 
         Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
         FontMetrics metr = getFontMetrics(KA);
 
+        addColorButtons(KA, metr);
+        addBorderButtons(KA, metr);
 
         String text = "< Settings";
 
@@ -223,7 +237,7 @@ public class Board extends JPanel implements ActionListener {
 
         gSettings.setFont(KA);
         
-        gSettings.setBounds(B_WIDTH/4 - metr.stringWidth(text)/2, 310, metr.stringWidth(text), 20);
+        gSettings.setBounds(B_WIDTH/4 - metr.stringWidth(text)/2, B_HEIGHT - 50, metr.stringWidth(text), 20);
 
         gSettings.setForeground(Color.white);
 
@@ -232,7 +246,7 @@ public class Board extends JPanel implements ActionListener {
 
         gSettings.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                gSettings.setForeground(Color.green);
+                gSettings.setForeground(mainColor);
 
             }
         
@@ -248,12 +262,67 @@ public class Board extends JPanel implements ActionListener {
             {
                 //need to kill everything currently open 
                 gSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
+                for(int i=0; i<2; i++)
+                {
+                    colorButtons[i].setVisible(false);
+                    setBorder[i].setVisible(false);
+                }
                 inGraphicsSettings = false;
                 setVals();
                 initSettings();
             }
         });
 
+    }
+
+    private void addColorButtons(Font KA, FontMetrics metr)
+    {
+        for(int i = 0; i <2; i++) //lol I tried to do this but it did uhhh not work! will fix it in a min
+        {
+            colorButtons[i] = new JButton(colorOptions[i]);
+
+            colorButtons[i].setContentAreaFilled(false);
+            colorButtons[i].setBorder(BorderFactory.createEmptyBorder());
+            colorButtons[i].setFocusable(false);
+
+            colorButtons[i].putClientProperty("color", i); // eventually putting this will also contain a color object or there will be a dict to just search for the string so this will be useful
+
+
+            colorButtons[i].setFont(KA);
+            
+            colorButtons[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(colorOptions[i])/2, 60, metr.stringWidth(colorOptions[i]), 20);
+
+            if(i == mainColorInt)
+                colorButtons[i].setForeground(mainColor);
+            else
+                colorButtons[i].setForeground(Color.white);
+
+
+            this.add(colorButtons[i]);
+            colorButtons[i].setVisible(true);
+
+            colorButtons[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    int j = (Integer)((JButton)e.getSource()).getClientProperty( "color" );
+                    if(colorButtons[j].getText().equals("Orange"))
+                    {
+                        mainColor = new Color(250,161,95);
+                    }
+                    else if(colorButtons[j].getText().equals("Green"))
+                    {
+                        mainColor = Color.green;
+                    }
+                    colorButtons[j].setForeground(mainColor);
+                    colorButtons[mainColorInt].setForeground(Color.white);
+                    setBorder[borderInt].setForeground(mainColor);
+                    mainColorInt = j;
+                    
+                    
+
+                }
+            });
+        }
     }
 
 
@@ -290,7 +359,7 @@ public class Board extends JPanel implements ActionListener {
             moreSettings[i].addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
                     int j = (Integer)((JButton)evt.getSource()).getClientProperty( "num" );
-                    moreSettings[j].setForeground(Color.green);
+                    moreSettings[j].setForeground(mainColor);
 
                 }
             
@@ -350,7 +419,7 @@ public class Board extends JPanel implements ActionListener {
             setSize[i].setFont(KA);
             if(bSize == i)
             {
-                setSize[i].setForeground(Color.green);
+                setSize[i].setForeground(mainColor);
             }
             else
             {
@@ -369,7 +438,7 @@ public class Board extends JPanel implements ActionListener {
                     setSize[bSize].setForeground(Color.white);
                     // From this stackoverflow article https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
                     bSize = (Integer)((JButton)e.getSource()).getClientProperty( "size" );
-                    setSize[bSize].setForeground(Color.green);
+                    setSize[bSize].setForeground(mainColor);
                     
                 }
             });
@@ -393,7 +462,7 @@ public class Board extends JPanel implements ActionListener {
             setDots[i].setFont(KA);
             if(dAdded == i)
             {
-                setDots[i].setForeground(Color.green);
+                setDots[i].setForeground(mainColor);
             }
             else
             {
@@ -412,7 +481,7 @@ public class Board extends JPanel implements ActionListener {
                     setDots[dAdded].setForeground(Color.white);
                     // From this stackoverflow article https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
                     dAdded = (Integer)((JButton)e.getSource()).getClientProperty( "dots" );
-                    setDots[dAdded].setForeground(Color.green);         
+                    setDots[dAdded].setForeground(mainColor);         
                 }
             });
         }
@@ -434,7 +503,7 @@ public class Board extends JPanel implements ActionListener {
             setSpeed[i].setFont(KA);
             if(speed == i)
             {
-                setSpeed[i].setForeground(Color.green);
+                setSpeed[i].setForeground(mainColor);
             }
             else
             {
@@ -453,7 +522,7 @@ public class Board extends JPanel implements ActionListener {
                     setSpeed[speed].setForeground(Color.white);
                     // From this stackoverflow article https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
                     speed = (Integer)((JButton)e.getSource()).getClientProperty( "speed" );
-                    setSpeed[speed].setForeground(Color.green);
+                    setSpeed[speed].setForeground(mainColor);
                     
                 }
             });
@@ -480,7 +549,7 @@ public class Board extends JPanel implements ActionListener {
 
             setBorder[i].setFont(KA);
             
-            setBorder[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(text)/2, 310, metr.stringWidth(text), 20);
+            setBorder[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(text)/2, 160, metr.stringWidth(text), 20);
 
             this.add(setBorder[i]);
             setBorder[i].setVisible(true);
@@ -490,19 +559,20 @@ public class Board extends JPanel implements ActionListener {
         if(border)
         {
             setBorder[0].setForeground(Color.white);
-            setBorder[1].setForeground(Color.green);
+            setBorder[1].setForeground(mainColor);
         }
         else
         {
-            setBorder[0].setForeground(Color.green);
+            setBorder[0].setForeground(mainColor);
             setBorder[1].setForeground(Color.white);
         }
         setBorder[0].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
                 setBorder[1].setForeground(Color.white);
-                border =false;
-                setBorder[0].setForeground(Color.green);
+                border = false;
+                setBorder[0].setForeground(mainColor);
+                borderInt = 0;
                 
             }
         });
@@ -511,7 +581,8 @@ public class Board extends JPanel implements ActionListener {
             {
                 setBorder[0].setForeground(Color.white);
                 border =true;
-                setBorder[1].setForeground(Color.green);
+                setBorder[1].setForeground(mainColor);
+                borderInt = 1;
                 
             }
         });
@@ -564,24 +635,20 @@ public class Board extends JPanel implements ActionListener {
 
     private void loadImages() {
 
+        ImageIcon iid = new ImageIcon(snakeImages[borderInt][mainColorInt]);
+        ball = iid.getImage();
+
+        ImageIcon iih = new ImageIcon(snakeImages[borderInt][mainColorInt]);
+        head = iih.getImage();
+
+
         if(border)
         {
-            ImageIcon iid = new ImageIcon("Images/dotnoborder.png");
-            ball = iid.getImage();
-
-            ImageIcon iih = new ImageIcon("Images/dotnoborder.png");
-            head = iih.getImage();
-
             ImageIcon iia = new ImageIcon("Images/headnoborder.png");
             apple = iia.getImage();
         }
         else
         {
-            ImageIcon iid = new ImageIcon("Images/dotbig.png");
-            ball = iid.getImage();
-
-            ImageIcon iih = new ImageIcon("Images/dotbig.png");
-            head = iih.getImage();
 
             ImageIcon iia = new ImageIcon("Images/headbig.png");
             apple = iia.getImage();
@@ -683,7 +750,7 @@ public class Board extends JPanel implements ActionListener {
         FontMetrics metr = getFontMetrics(big);
         String s = "Snake!";
 
-        g.setColor(Color.green);
+        g.setColor(mainColor);
         g.setFont(big);
         g.drawString(s, (B_WIDTH - metr.stringWidth(s)) / 2, 90); 
 
@@ -704,16 +771,15 @@ public class Board extends JPanel implements ActionListener {
     {
         Font big = new Font("Karmatic Arcade", Font.PLAIN, 30);
         FontMetrics metr2 = getFontMetrics(big);
-        String si = "Size";
+
+
+        String c = "Color";
         g.setColor(Color.white);
         g.setFont(big);
-        g.drawString(si, (B_WIDTH - metr2.stringWidth(si)) / 2, 30); //30 is where it puts the middle of the string vertical wise. Only needs to be 15 I guess?
+        g.drawString(c, (B_WIDTH - metr2.stringWidth(c)) / 2, 30); // lol java compiler broke... This is literally insane hahaha never found a bug like this. 
 
-        String sp = "Speed";
+        String sp = "Styles"; // under here is where connected/unconnected goes!
         g.drawString(sp, (B_WIDTH - metr2.stringWidth(sp)) / 2, 130);
-
-        String d = "Dots";
-        g.drawString(d, (B_WIDTH - metr2.stringWidth(d)) / 2, 230);
     }
 
     private void drawSettings(Graphics g)
