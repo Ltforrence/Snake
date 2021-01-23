@@ -83,6 +83,9 @@ public class Board extends JPanel implements ActionListener {
     //wanted to do this as an enum but no way to get string values in that case :(
     private String[] colorOptions = {"Green", "Orange"}; //need to make these custom objects I guess? not 100 percent though lol. Then I can pass it into the button and have the object also contain the color object? maybe I could just make this whole thing a dict/hash table there are better ways than what I am doing.
     private String[][] snakeImages = {{"Images/dotbig.png", "Images/orangedot.png"},{"Images/dotnoborder.png","Images/orangedot2.png"}};
+    private String[] startImages = {"Images/startgreen.png","Images/startOrange.png"};
+    private String[] restartImages = {"Images/restart.png", "Images/restartOrange.png"};
+    private String[] settingsImages = {"Images/SettingsGreen.png", "Images/SettingsOrange.png"};
 
 
 
@@ -269,6 +272,7 @@ public class Board extends JPanel implements ActionListener {
                 }
                 inGraphicsSettings = false;
                 setVals();
+                loadImages();
                 initSettings();
             }
         });
@@ -657,19 +661,19 @@ public class Board extends JPanel implements ActionListener {
 
         
 
-        ImageIcon icon = new ImageIcon("Images/restart.png");
+        ImageIcon icon = new ImageIcon(restartImages[mainColorInt]);
         img = icon.getImage();  
 
         ImageIcon icon2 = new ImageIcon("Images/restartred.png");
         img2 = icon2.getImage(); 
 
-        ImageIcon icon3 = new ImageIcon("Images/Settingsgreen.png");
+        ImageIcon icon3 = new ImageIcon(settingsImages[mainColorInt]);
         img3 = icon3.getImage();  
 
         ImageIcon icon4 = new ImageIcon("Images/Settingsred.png");
         img4 = icon4.getImage();
 
-        ImageIcon icon5 = new ImageIcon("Images/startgreen.png");
+        ImageIcon icon5 = new ImageIcon(startImages[mainColorInt]);
         img5 = icon5.getImage();  
 
         ImageIcon icon6 = new ImageIcon("Images/startred.png");
