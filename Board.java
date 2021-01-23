@@ -76,16 +76,17 @@ public class Board extends JPanel implements ActionListener {
     private JButton[] setDots = new JButton[5];
     private JButton[] setBorder = new JButton[2];
     private JButton[] moreSettings = new JButton[2];
-    private JButton[] colorButtons = new JButton[2]; // just 2 for now but will add more soon!
+    private JButton[] colorButtons = new JButton[6]; // just 2 for now but will add more soon!
     private JButton startSettings; //this is the start button in settings
     private JButton gSettings; //settings button in graphics settings
 
     //wanted to do this as an enum but no way to get string values in that case :(
-    private String[] colorOptions = {"Green", "Orange"}; //need to make these custom objects I guess? not 100 percent though lol. Then I can pass it into the button and have the object also contain the color object? maybe I could just make this whole thing a dict/hash table there are better ways than what I am doing.
-    private String[][] snakeImages = {{"Images/dotbig.png", "Images/orangedot.png"},{"Images/dotnoborder.png","Images/orangedot2.png"}};
-    private String[] startImages = {"Images/startgreen.png","Images/startOrange.png"};
-    private String[] restartImages = {"Images/restart.png", "Images/restartOrange.png"};
-    private String[] settingsImages = {"Images/SettingsGreen.png", "Images/SettingsOrange.png"};
+    private String[] colorOptions = {"Green", "Orange", "Pink", "Purple", "Blue", "Yellow"}; //need to make these custom objects I guess? not 100 percent though lol. Then I can pass it into the button and have the object also contain the color object? maybe I could just make this whole thing a dict/hash table there are better ways than what I am doing.
+    private Color[] colorObjs = {Color.green, new Color(250,161,95), new Color(247,123,225), new Color(204,100,247), new Color(100,245,223), new Color(253,255,95)};
+    private String[][] snakeImages = {{"Images/dotbig.png", "Images/orangedot.png", "Images/pinkborder.png", "Images/purpledot.png", "Images/bluedot.png", "Images/yellowdot.png"},{"Images/dotnoborder.png","Images/orangedot2.png", "Images/pinknoborder.png", "Images/purpledotnoborder.png", "Images/bluedot2.png", "Images/yellowdot2.png"}};
+    private String[] startImages = {"Images/startgreen.png","Images/startOrange.png", "Images/startpink.png", "Images/startpurple.png", "Images/startblue.png", "Images/startyellow.png"};
+    private String[] restartImages = {"Images/restart.png", "Images/restartOrange.png", "Images/restartpink.png", "Images/restartpurple.png", "Images/restartblue.png", "Images/restartyellow.png"};
+    private String[] settingsImages = {"Images/SettingsGreen.png", "Images/SettingsOrange.png", "Images/Settingspink.png", "Images/SettingsPurple.png", "Images/SettingsBlue.png", "Images/SettingsYellow.png"};
 
 
 
@@ -265,10 +266,11 @@ public class Board extends JPanel implements ActionListener {
             {
                 //need to kill everything currently open 
                 gSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
-                for(int i=0; i<2; i++)
+                for(int i=0; i<6; i++)
                 {
                     colorButtons[i].setVisible(false);
-                    setBorder[i].setVisible(false);
+                    if(i<2)
+                        setBorder[i].setVisible(false);
                 }
                 inGraphicsSettings = false;
                 setVals();
@@ -281,7 +283,7 @@ public class Board extends JPanel implements ActionListener {
 
     private void addColorButtons(Font KA, FontMetrics metr)
     {
-        for(int i = 0; i <2; i++) //lol I tried to do this but it did uhhh not work! will fix it in a min
+        for(int i = 0; i <6; i++) //lol I tried to do this but it did uhhh not work! will fix it in a min
         {
             colorButtons[i] = new JButton(colorOptions[i]);
 
@@ -294,7 +296,15 @@ public class Board extends JPanel implements ActionListener {
 
             colorButtons[i].setFont(KA);
             
-            colorButtons[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(colorOptions[i])/2, 60, metr.stringWidth(colorOptions[i]), 20);
+            //I could do this a lil better for sure lol
+            int r = i%3;
+            int t = 0;
+            if(i>2) // this is just for making a second row lol
+            {
+                t = 1;
+            }
+            
+            colorButtons[i].setBounds(B_WIDTH/6*(2*r+1) - metr.stringWidth(colorOptions[i])/2, 60+(60*t), metr.stringWidth(colorOptions[i]), 20);
 
             if(i == mainColorInt)
                 colorButtons[i].setForeground(mainColor);
@@ -309,14 +319,7 @@ public class Board extends JPanel implements ActionListener {
                 public void actionPerformed(ActionEvent e)
                 {
                     int j = (Integer)((JButton)e.getSource()).getClientProperty( "color" );
-                    if(colorButtons[j].getText().equals("Orange"))
-                    {
-                        mainColor = new Color(250,161,95);
-                    }
-                    else if(colorButtons[j].getText().equals("Green"))
-                    {
-                        mainColor = Color.green;
-                    }
+                    mainColor = colorObjs[j];
                     colorButtons[j].setForeground(mainColor);
                     colorButtons[mainColorInt].setForeground(Color.white);
                     setBorder[borderInt].setForeground(mainColor);
@@ -553,7 +556,7 @@ public class Board extends JPanel implements ActionListener {
 
             setBorder[i].setFont(KA);
             
-            setBorder[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(text)/2, 160, metr.stringWidth(text), 20);
+            setBorder[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(text)/2, 220, metr.stringWidth(text), 20);
 
             this.add(setBorder[i]);
             setBorder[i].setVisible(true);
@@ -783,7 +786,7 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(c, (B_WIDTH - metr2.stringWidth(c)) / 2, 30); // lol java compiler broke... This is literally insane hahaha never found a bug like this. 
 
         String sp = "Styles"; // under here is where connected/unconnected goes!
-        g.drawString(sp, (B_WIDTH - metr2.stringWidth(sp)) / 2, 130);
+        g.drawString(sp, (B_WIDTH - metr2.stringWidth(sp)) / 2, 190);
     }
 
     private void drawSettings(Graphics g)
