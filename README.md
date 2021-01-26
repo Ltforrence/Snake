@@ -3,6 +3,8 @@ I wanted to create a better (or at least more personalized snake game) so I did!
 
 Currently I still need to make this multiple files(This has been bad code practice through and through), do leaderboard stuff, and round out a few corners, but it is very good looking so that is pretty nice!
 
+What I have really realized in this is that I have no idea how to organize graphical interface code! I made it all one file to start, because it was all one JFrame. Anyway trying to fix that.
+
 I know this is a little bit of a silly project, but I have been wanting to work on a bit more complex game and so I started with this.
 
 
