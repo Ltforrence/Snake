@@ -1,7 +1,7 @@
 # Snake
 I wanted to create a better (or at least more personalized snake game) so I did!
 
-(This is a work in progress, but by the end you will be able to change some of the settings as you wish, such as snake speed and board size, and it will store scores)
+Currently I still need to make this multiple files(This has been bad code practice through and through), do leaderboard stuff, and round out a few corners, but it is very good looking so that is pretty nice!
 
 I know this is a little bit of a silly project, but I have been wanting to work on a bit more complex game and so I started with this.
 
