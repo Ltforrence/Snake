@@ -85,6 +85,7 @@ public class Board extends JPanel implements ActionListener {
 
     //different pages
     private VisualPage vp;
+    private SettingsPage sp;
     
 
 
@@ -131,6 +132,7 @@ public class Board extends JPanel implements ActionListener {
     public void initPages()
     {
         vp = new VisualPage(this, snake);
+        sp = new SettingsPage(this, snake);
     }
 
     public void initTitle()
@@ -186,76 +188,16 @@ public class Board extends JPanel implements ActionListener {
             @Override
             public void keyPressed(KeyEvent e)
             {   
-                //System.out.println("key released");
-                //System.out.println("Resizing");
-                String str = nameBox.getText();
-                //System.out.println(str);
-                int newWidth = metr2.stringWidth(str);
-                if(newWidth ==0)
-                {
-                    newWidth =20;
-                }
-                else
-                {
-                    newWidth +=10;
-                }
-                int len = str.length(); //len*40 should be the length because that is the font size
-
-                xCorner = B_WIDTH/2-newWidth/2;
-                yCorner = 230;
-                wBox = newWidth;
-                hBox = 40;
-                nameBox.setBounds(xCorner,230,newWidth,40);
-                name = nameBox.getText();
+                resizeBox(metr2);
             }
             @Override
             public void keyReleased(KeyEvent event) {
-                //System.out.println("key released");
-                //System.out.println("Resizing");
-                String str = nameBox.getText();
-                //System.out.println(str);
-                int newWidth = metr2.stringWidth(str);
-                if(newWidth ==0)
-                {
-                    newWidth =20;
-                }
-                else
-                {
-                    newWidth +=10;
-                }
-                int len = str.length(); //len*40 should be the length because that is the font size
-
-                xCorner = B_WIDTH/2-newWidth/2;
-                yCorner = 230;
-                wBox = newWidth;
-                hBox = 40;
-                nameBox.setBounds(xCorner,230,newWidth,40);
-                name = nameBox.getText();
+                
+                resizeBox(metr2);
             }
             @Override
             public void keyTyped(KeyEvent event) {
-                //System.out.println("key released");
-                //System.out.println("key released");
-                //System.out.println("Resizing");
-                String str = nameBox.getText();
-                //System.out.println(str);
-                int newWidth = metr2.stringWidth(str);
-                if(newWidth ==0)
-                {
-                    newWidth =20;
-                }
-                else
-                {
-                    newWidth +=10;
-                }
-                int len = str.length(); //len*40 should be the length because that is the font size
-
-                xCorner = B_WIDTH/2-newWidth/2;
-                yCorner = 230;
-                wBox = newWidth;
-                hBox = 40;
-                nameBox.setBounds(xCorner,230,newWidth,40);
-                name = nameBox.getText();
+                resizeBox(metr2);
             }
         });
         this.add(nameBox);
@@ -290,74 +232,25 @@ public class Board extends JPanel implements ActionListener {
         this.revalidate();
     }
 
-
-
-    public void initSettings()
+    public void resizeBox(FontMetrics metr2)
     {
-        inMain = false;
-        inGraphicsSettings = false;
-        inSettings = true;
-        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
-        snake.setSize(B_WIDTH, B_HEIGHT);
-        snake.pack();
-        
+        String str = nameBox.getText();
+        //System.out.println(str);
+        int newWidth = metr2.stringWidth(str);
+        if(newWidth ==0)
+            newWidth =20;
+        else
+            newWidth +=10;
 
-        //These will be set by settings
-        //bSize = 5; // top size
-        //int speed = 3; // mid speed
-        //boolean border = true; //border on or off
-        //You will be able to send in your name from the main screen too.
-        //int dAdded = 1; //Dots added
-        //end of settings here
-        Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
-        FontMetrics metr = getFontMetrics(KA);
-
-        addSizeButtons(KA, metr);
-        addSpeedButtons(KA, metr);
-        addDotsButtons(KA, metr);
-        addScreenButtons(KA, metr); //changing screen buttons? idk 
-        
-        
-        Image newimg = img5.getScaledInstance( B_WIDTH/2, B_HEIGHT/6,  java.awt.Image.SCALE_SMOOTH ) ;   
-        Image newimg2 = img6.getScaledInstance( B_WIDTH/2, B_HEIGHT/6,  java.awt.Image.SCALE_SMOOTH ) ;  
-
-        startSettings = new JButton(new ImageIcon(newimg));
-        startSettings.setRolloverIcon(new ImageIcon(newimg2));
-        startSettings.setContentAreaFilled(false);
-        startSettings.setBorder(BorderFactory.createEmptyBorder());
-        startSettings.setFocusable(false);
-        startSettings.setBounds(B_WIDTH/2-B_WIDTH/4, B_HEIGHT-B_HEIGHT/5, B_WIDTH/2, B_HEIGHT/6);
-
-        startSettings.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) // @HERE: I need to make most of this a method since it there are 3 different button that clear all this
-            {
-                for(int i = 0; i<10; i++)
-                {
-                    setSize[i].setVisible(false);
-                    if(i<5)
-                    {
-                        setSpeed[i].setVisible(false);
-                        setDots[i].setVisible(false);
-                        if(i<2)
-                        {
-                            //setBorder[i].setVisible(false); not in this anymore!
-                            moreSettings[i].setVisible(false);
-                        }
-                    }
-                }
-                startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
-                setVals();
-                initBoard();
-
-            }
-        });
-        this.setLayout(null);
-        this.add(startSettings);
-        startSettings.setVisible(true);
-        this.revalidate();
-        
+        xCorner = B_WIDTH/2-newWidth/2;
+        yCorner = 230;
+        wBox = newWidth;
+        hBox = 40;
+        nameBox.setBounds(xCorner,230,newWidth,40);
+        name = nameBox.getText();
     }
 
+    
 
     public void addScreenButtonsTitle(Font KA, FontMetrics metr)
     {
@@ -416,7 +309,12 @@ public class Board extends JPanel implements ActionListener {
                     if(j == 0)
                         System.out.println("Here we would init scoreboard!"); //lol nothing yet probably inithighscore or something but not yet!
                     else
-                        initSettings();//only difference from above. Coulda put this in the for loop lol
+                    {
+                        inMain = false;
+                        inGraphicsSettings = false;
+                        inSettings = true;
+                        sp.initSettings();//only difference from above. Coulda put this in the for loop lol
+                    }
 
                     nameBox.setVisible(false);
                 }
@@ -468,214 +366,66 @@ public class Board extends JPanel implements ActionListener {
     {
         mainColorInt = mci;
     }
-    
-    //There are 3 of these lol so maybe I should just make one with different options basically. Just passin variables in? well try that afterwards
-    public void addScreenButtons(Font KA, FontMetrics metr)
+    public void setSpeed(int s)
     {
-        //I know for this one there are only 2 but it is still easier to not have to do this twice
-        for(int i = 0; i<2; i++)
-        {
-            String text = "";
-            if(i == 0)
-                text = "< Title";
-            else
-                text = "Visual >";
+        speed = s;
+    }
+    public int getSpeed()
+    {
+        return speed;
+    }
+    public void setBSize(int bs)
+    {
+        bSize = bs;
+    }
+    public int getBSize()
+    {
+        return bSize;
+    }
+    public void setDAdded(int da)
+    {
+        dAdded = da;
+    }
+    public int getDAdded()
+    {
+        return dAdded;
+    }
+    public void setName(String n)
+    {
+        name = n;
+    }
+    public String getName()
+    {
+        return name;
+    }
+    public Image getimg5()
+    {
+        return img5;
+    }
+    public Image getimg6()
+    {
+        return img6;
+    }
+    public void inGS() //call when entering graphics settings
+    {
+        inGraphicsSettings = true;
+        inSettings = false;
+    }
+    public void inS()
+    {
+        inGraphicsSettings = false;
+        inSettings = true;
+        inMain = false;
 
-            moreSettings[i] = new JButton(text);
-
-            moreSettings[i].setContentAreaFilled(false);
-            moreSettings[i].setBorder(BorderFactory.createEmptyBorder());
-            moreSettings[i].setFocusable(false);
-
-            moreSettings[i].putClientProperty("num", i );
-
-
-            moreSettings[i].setFont(KA);
-            
-            moreSettings[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(text)/2, 320, metr.stringWidth(text), 20);
-
-            moreSettings[i].setForeground(Color.white);
-
-            this.add(moreSettings[i]);
-            moreSettings[i].setVisible(true);
-
-            moreSettings[i].addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    int j = (Integer)((JButton)evt.getSource()).getClientProperty( "num" );
-                    moreSettings[j].setForeground(mainColor);
-
-                }
-            
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    int j = (Integer)((JButton)evt.getSource()).getClientProperty( "num" );
-                    moreSettings[j].setForeground(Color.white);
-                }
-            });
-
-            moreSettings[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e)
-                {
-
-                    int j = (Integer)((JButton)e.getSource()).getClientProperty( "num" );
-                    //need to kill everything currently open 
-                    for(int i = 0; i<10; i++)
-                    {
-                        setSize[i].setVisible(false);
-                        if(i<5)
-                        {
-                            setSpeed[i].setVisible(false);
-                            setDots[i].setVisible(false);
-                            if(i<2)
-                            {
-                                //setBorder[i].setVisible(false);
-                                moreSettings[i].setVisible(false);
-                            }
-                        }
-                    }
-                    startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
-                    setVals();
-                    if(j == 0)
-                        initTitle();
-                    else
-                    {
-                        inGraphicsSettings = true;
-                        inSettings = false;
-                        vp.initGraphicsSettings();
-                    }
-                }
-            });
-        }
-        
+    }
+    public void inT()
+    {
+        inSettings = false;
+        inMain = true;
+    }
         
 
-    }
-
-    public void addSizeButtons(Font KA, FontMetrics metr)
-    {
-        for(int i = 0; i<10; i++)
-        {
-            setSize[i] = new JButton(""+i);
-            setSize[i].setContentAreaFilled(false);
-            setSize[i].setBorder(BorderFactory.createEmptyBorder());
-            setSize[i].setFocusable(false);
-
-            //this is pretty nice tbh
-            setSize[i].putClientProperty("size", i );
-
-            String num = ""+(i+1);
-            setSize[i].setFont(KA);
-            if(bSize == i)
-            {
-                setSize[i].setForeground(mainColor);
-            }
-            else
-            {
-                setSize[i].setForeground(Color.white);
-            }
-
-            setSize[i].setText(num);
-            setSize[i].setBounds(B_WIDTH/40 * (3*i + 6), 60, metr.stringWidth(num), 20);
-
-            this.add(setSize[i]);
-            setSize[i].setVisible(true);
-
-            setSize[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e)
-                {
-                    setSize[bSize].setForeground(Color.white);
-                    // From this stackoverflow article https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
-                    bSize = (Integer)((JButton)e.getSource()).getClientProperty( "size" );
-                    setSize[bSize].setForeground(mainColor);
-                    
-                }
-            });
-        }
     
-    }
-
-    public void addDotsButtons(Font KA, FontMetrics metr)
-    {
-        for(int i = 0; i<5; i++)
-        {
-            setDots[i] = new JButton(""+i);
-            setDots[i].setContentAreaFilled(false);
-            setDots[i].setBorder(BorderFactory.createEmptyBorder());
-            setDots[i].setFocusable(false);
-
-            //this is pretty nice tbh
-            setDots[i].putClientProperty("dots", i );
-
-            String num = ""+(i+1);
-            setDots[i].setFont(KA);
-            if(dAdded == i)
-            {
-                setDots[i].setForeground(mainColor);
-            }
-            else
-            {
-                setDots[i].setForeground(Color.white);
-            }
-
-            setDots[i].setText(num);
-            setDots[i].setBounds(B_WIDTH/40 * (4*i + 12), 260, metr.stringWidth(num), 20);
-
-            this.add(setDots[i]);
-            setDots[i].setVisible(true);
-
-            setDots[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e)
-                {
-                    setDots[dAdded].setForeground(Color.white);
-                    // From this stackoverflow article https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
-                    dAdded = (Integer)((JButton)e.getSource()).getClientProperty( "dots" );
-                    setDots[dAdded].setForeground(mainColor);         
-                }
-            });
-        }
-    }
-
-    public void addSpeedButtons(Font KA, FontMetrics metr)
-    {
-        for(int i = 0; i<5; i++)
-        {
-            setSpeed[i] = new JButton(""+i);
-            setSpeed[i].setContentAreaFilled(false);
-            setSpeed[i].setBorder(BorderFactory.createEmptyBorder());
-            setSpeed[i].setFocusable(false);
-
-            //this is pretty nice tbh
-            setSpeed[i].putClientProperty("speed", i );
-
-            String num = ""+(i+1);
-            setSpeed[i].setFont(KA);
-            if(speed == i)
-            {
-                setSpeed[i].setForeground(mainColor);
-            }
-            else
-            {
-                setSpeed[i].setForeground(Color.white);
-            }
-
-            setSpeed[i].setText(num);
-            setSpeed[i].setBounds(B_WIDTH/40 * (4*i + 12), 160, metr.stringWidth(num), 20);
-
-            this.add(setSpeed[i]);
-            setSpeed[i].setVisible(true);
-
-            setSpeed[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e)
-                {
-                    setSpeed[speed].setForeground(Color.white);
-                    // From this stackoverflow article https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
-                    speed = (Integer)((JButton)e.getSource()).getClientProperty( "speed" );
-                    setSpeed[speed].setForeground(mainColor);
-                    
-                }
-            });
-        }
-    }
-
 
     public void setVals()
     {
@@ -729,7 +479,6 @@ public class Board extends JPanel implements ActionListener {
         ImageIcon iih = new ImageIcon(snakeImages[borderInt][mainColorInt]);
         head = iih.getImage();
 
-
         if(border)
         {
             ImageIcon iia = new ImageIcon("Images/headnoborder.png");
@@ -737,13 +486,9 @@ public class Board extends JPanel implements ActionListener {
         }
         else
         {
-
             ImageIcon iia = new ImageIcon("Images/headbig.png");
             apple = iia.getImage();
-
         }
-
-        
 
         ImageIcon icon = new ImageIcon(restartImages[mainColorInt]);
         img = icon.getImage();  
@@ -1015,7 +760,10 @@ public class Board extends JPanel implements ActionListener {
             button2.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    initSettings();
+                    inMain = false;
+                    inGraphicsSettings = false;
+                    inSettings = true;
+                    sp.initSettings();
                     button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
                     button2.setVisible(false); //gotta make it invisible so that after next game another can be added instead
                 }

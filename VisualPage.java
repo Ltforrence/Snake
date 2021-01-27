@@ -49,6 +49,7 @@ public class VisualPage {
 
     public void initGraphicsSettings()
     {
+        board.inGS();
         //will have a call here to set where we are so that the graphics paints
         //inGraphicsSettings = true;
         //inSettings = false;
@@ -110,7 +111,8 @@ public class VisualPage {
                 //inGraphicsSettings = false;
                 board.setVals();
                 board.loadImages();
-                board.initSettings();
+                SettingsPage sp = new SettingsPage(board, snake);
+                sp.initSettings();
             }
         });
     }
