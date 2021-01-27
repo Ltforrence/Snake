@@ -29,9 +29,7 @@ public class Board extends JPanel implements ActionListener {
     private final int B_WIDTH = 460; //these are now base width and base height
     private final int B_HEIGHT = 460; 
     private final int DOT_SIZE = 20; // made the dot half the size! just to check how shit works here
-    private final int ALL_DOTS = 225; // now this many dots will fit. This is now defunct but I leave it here for now
     private final int RAND_POS = 14; // Had to change this to 39 because now the board is 40 x 40
-    private final int DELAY = 100; //I changed this to be shorter because I assume it is what makes it go faster
 
     private int x[];
     private int y[];
@@ -66,10 +64,10 @@ public class Board extends JPanel implements ActionListener {
     private Image img4;
     private Image img5;
     private Image img6;
-    private JFrame snake;
+    private Snake snake;
     private int fullRand;
     private int fullDots;
-    private int fullSpeed = DELAY; //set it to this to start! but it will be reset later
+    private int fullSpeed = 100; //set it to this to start! but it will be reset later
 
     private int toBeAdded = 0;
 
@@ -85,6 +83,10 @@ public class Board extends JPanel implements ActionListener {
     private JButton gSettings; //settings button in graphics settings
     private JButton startTitle; //start button on the title screen
 
+    //different pages
+    private VisualPage vp;
+    
+
 
 
     private JTextField nameBox;
@@ -96,8 +98,6 @@ public class Board extends JPanel implements ActionListener {
 
 
     //wanted to do this as an enum but no way to get string values in that case :(
-    private String[] colorOptions = {"Green", "Orange", "Pink", "Purple", "Blue", "Yellow"}; //need to make these custom objects I guess? not 100 percent though lol. Then I can pass it into the button and have the object also contain the color object? maybe I could just make this whole thing a dict/hash table there are better ways than what I am doing.
-    private Color[] colorObjs = {Color.green, new Color(250,161,95), new Color(247,123,225), new Color(204,100,247), new Color(100,245,223), new Color(253,255,95)};
     private String[][] snakeImages = {{"Images/dotbig.png", "Images/orangedot.png", "Images/pinkborder.png", "Images/purpledot.png", "Images/bluedot.png", "Images/yellowdot.png"},{"Images/dotnoborder.png","Images/orangedot2.png", "Images/pinknoborder.png", "Images/purpledotnoborder.png", "Images/bluedot2.png", "Images/yellowdot2.png"}};
     private String[] startImages = {"Images/startgreen.png","Images/startOrange.png", "Images/startpink.png", "Images/startpurple.png", "Images/startblue.png", "Images/startyellow.png"};
     private String[] restartImages = {"Images/restart.png", "Images/restartOrange.png", "Images/restartpink.png", "Images/restartpurple.png", "Images/restartblue.png", "Images/restartyellow.png"};
@@ -122,14 +122,18 @@ public class Board extends JPanel implements ActionListener {
         snake = s;
 
         initTitle();
-        //initSettings();
-        //initBoard();
+        initPages(); //init all of the files that run the various pages
 
         timer = new Timer(fullSpeed, this);
         timer.start();
     }
 
-    private void initTitle()
+    public void initPages()
+    {
+        vp = new VisualPage(this, snake);
+    }
+
+    public void initTitle()
     {
         setVals();
         inSettings = false; //in case were coming from settings
@@ -288,7 +292,7 @@ public class Board extends JPanel implements ActionListener {
 
 
 
-    private void initSettings()
+    public void initSettings()
     {
         inMain = false;
         inGraphicsSettings = false;
@@ -354,123 +358,8 @@ public class Board extends JPanel implements ActionListener {
         
     }
 
-    private void initGraphicsSettings()
-    {
-        inGraphicsSettings = true;
-        inSettings = false;
-        //if you don't add the next 3 lines it wont change the top line to say color lol. Some sort of java compiler issue goin on here. Never seen this before.
-        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
-        snake.setSize(B_WIDTH, B_HEIGHT);
-        snake.pack();
 
-        Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
-        FontMetrics metr = getFontMetrics(KA);
-
-        addColorButtons(KA, metr);
-        addBorderButtons(KA, metr);
-
-        String text = "< Settings";
-
-        gSettings = new JButton(text);
-
-        gSettings.setContentAreaFilled(false);
-        gSettings.setBorder(BorderFactory.createEmptyBorder());
-        gSettings.setFocusable(false);
-
-        gSettings.setFont(KA);
-        
-        gSettings.setBounds(B_WIDTH/4 - metr.stringWidth(text)/2, B_HEIGHT - 50, metr.stringWidth(text), 20);
-
-        gSettings.setForeground(Color.white);
-
-        this.add(gSettings);
-        gSettings.setVisible(true);
-
-        gSettings.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                gSettings.setForeground(mainColor);
-
-            }
-        
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                gSettings.setForeground(Color.white);
-            }
-            });
-
-            
-        
-        gSettings.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                //need to kill everything currently open 
-                gSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
-                for(int i=0; i<6; i++)
-                {
-                    colorButtons[i].setVisible(false);
-                    if(i<2)
-                        setBorder[i].setVisible(false);
-                        
-                }
-                inGraphicsSettings = false;
-                setVals();
-                loadImages();
-                initSettings();
-            }
-        });
-
-    }
-
-    private void addColorButtons(Font KA, FontMetrics metr)
-    {
-        for(int i = 0; i <6; i++) //lol I tried to do this but it did uhhh not work! will fix it in a min
-        {
-            colorButtons[i] = new JButton(colorOptions[i]);
-
-            colorButtons[i].setContentAreaFilled(false);
-            colorButtons[i].setBorder(BorderFactory.createEmptyBorder());
-            colorButtons[i].setFocusable(false);
-
-            colorButtons[i].putClientProperty("color", i); // eventually putting this will also contain a color object or there will be a dict to just search for the string so this will be useful
-
-
-            colorButtons[i].setFont(KA);
-            
-            //I could do this a lil better for sure lol
-            int r = i%3;
-            int t = 0;
-            if(i>2) // this is just for making a second row lol
-            {
-                t = 1;
-            }
-            
-            colorButtons[i].setBounds(B_WIDTH/6*(2*r+1) - metr.stringWidth(colorOptions[i])/2, 60+(60*t), metr.stringWidth(colorOptions[i]), 20);
-
-            if(i == mainColorInt)
-                colorButtons[i].setForeground(mainColor);
-            else
-                colorButtons[i].setForeground(Color.white);
-
-
-            this.add(colorButtons[i]);
-            colorButtons[i].setVisible(true);
-
-            colorButtons[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e)
-                {
-                    int j = (Integer)((JButton)e.getSource()).getClientProperty( "color" );
-                    mainColor = colorObjs[j];
-                    colorButtons[j].setForeground(mainColor);
-                    colorButtons[mainColorInt].setForeground(Color.white);
-                    setBorder[borderInt].setForeground(mainColor);
-                    mainColorInt = j;
-                    
-                    
-
-                }
-            });
-        }
-    }
-    private void addScreenButtonsTitle(Font KA, FontMetrics metr)
+    public void addScreenButtonsTitle(Font KA, FontMetrics metr)
     {
         //I know for this one there are only 2 but it is still easier to not have to do this twice
         for(int i = 0; i<2; i++)
@@ -538,8 +427,50 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
+    public boolean getBoardBorder()
+    {
+        return border;
+    }
+
+    public void setBoardBorder(boolean b)
+    {
+        border = b;
+    }
+    public int getBorderInt()
+    {
+        return borderInt;
+    }
+    public void setBorderInt(int bi)
+    {
+        borderInt = bi;
+    }
+    public int getBWidth()
+    {
+        return B_WIDTH;
+    }
+    public int getBHeight()
+    {
+        return B_HEIGHT;
+    }
+    public Color getMainColor()
+    {
+        return mainColor;
+    }
+    public void setMainColor(Color c)
+    {
+        mainColor = c;
+    }
+    public int getMainColorInt()
+    {
+        return mainColorInt;
+    }
+    public void setMainColorInt(int mci)
+    {
+        mainColorInt = mci;
+    }
+    
     //There are 3 of these lol so maybe I should just make one with different options basically. Just passin variables in? well try that afterwards
-    private void addScreenButtons(Font KA, FontMetrics metr)
+    public void addScreenButtons(Font KA, FontMetrics metr)
     {
         //I know for this one there are only 2 but it is still easier to not have to do this twice
         for(int i = 0; i<2; i++)
@@ -606,7 +537,11 @@ public class Board extends JPanel implements ActionListener {
                     if(j == 0)
                         initTitle();
                     else
-                        initGraphicsSettings();//only difference from above. Coulda put this in the for loop lol
+                    {
+                        inGraphicsSettings = true;
+                        inSettings = false;
+                        vp.initGraphicsSettings();
+                    }
                 }
             });
         }
@@ -615,7 +550,7 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
-    private void addSizeButtons(Font KA, FontMetrics metr)
+    public void addSizeButtons(Font KA, FontMetrics metr)
     {
         for(int i = 0; i<10; i++)
         {
@@ -658,7 +593,7 @@ public class Board extends JPanel implements ActionListener {
     
     }
 
-    private void addDotsButtons(Font KA, FontMetrics metr)
+    public void addDotsButtons(Font KA, FontMetrics metr)
     {
         for(int i = 0; i<5; i++)
         {
@@ -699,7 +634,7 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void addSpeedButtons(Font KA, FontMetrics metr)
+    public void addSpeedButtons(Font KA, FontMetrics metr)
     {
         for(int i = 0; i<5; i++)
         {
@@ -742,67 +677,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
 
-    private void addBorderButtons(Font KA, FontMetrics metr)
-    { //I know for this one there are only 2 but it is still easier to not have to do this twice
-        for(int i = 0; i<2; i++)
-        {
-            String text = "";
-            if(i == 0)
-                text = "Connected";
-            else
-                text = "Unconnected";
-
-            setBorder[i] = new JButton(text);
-
-            setBorder[i].setContentAreaFilled(false);
-            setBorder[i].setBorder(BorderFactory.createEmptyBorder());
-            setBorder[i].setFocusable(false);
-
-
-            setBorder[i].setFont(KA);
-            
-            setBorder[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(text)/2, 220, metr.stringWidth(text), 20);
-
-            this.add(setBorder[i]);
-            setBorder[i].setVisible(true);
-
-            
-        }
-        if(border)
-        {
-            setBorder[0].setForeground(Color.white);
-            setBorder[1].setForeground(mainColor);
-        }
-        else
-        {
-            setBorder[0].setForeground(mainColor);
-            setBorder[1].setForeground(Color.white);
-        }
-        setBorder[0].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                setBorder[1].setForeground(Color.white);
-                border = false;
-                setBorder[0].setForeground(mainColor);
-                borderInt = 0;
-                
-            }
-        });
-        setBorder[1].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                setBorder[0].setForeground(Color.white);
-                border =true;
-                setBorder[1].setForeground(mainColor);
-                borderInt = 1;
-                
-            }
-        });
-
-
-    }
-
-    private void setVals()
+    public void setVals()
     {
         fullWidth = 300 + 40*(bSize);
         fullHeight = 300 + 40*(bSize);
@@ -813,7 +688,7 @@ public class Board extends JPanel implements ActionListener {
         y = new int[fullDots];
     }
     
-    private void initBoard() {
+    public void initBoard() {
         
 
         //These need to be reset for when I restart the game
@@ -846,7 +721,7 @@ public class Board extends JPanel implements ActionListener {
         
     }
 
-    private void loadImages() {
+    public void loadImages() {
 
         ImageIcon iid = new ImageIcon(snakeImages[borderInt][mainColorInt]);
         ball = iid.getImage();
@@ -889,7 +764,7 @@ public class Board extends JPanel implements ActionListener {
         img6 = icon6.getImage();
     }
 
-    private void initGame() {
+    public void initGame() {
         dots = 1;
         toBeAdded = 2; //so this is just so that you can go any direction to start!
         int start = fullHeight/2;
@@ -918,7 +793,7 @@ public class Board extends JPanel implements ActionListener {
         doDrawing(g);
     }
     
-    private void doDrawing(Graphics g) {
+    public void doDrawing(Graphics g) {
         
         if (inGame) {
 
@@ -952,7 +827,7 @@ public class Board extends JPanel implements ActionListener {
             gameOver(g);
         } 
     }
-    private void drawMain(Graphics g)
+    public void drawMain(Graphics g)
     {
         Font big = new Font("Karmatic Arcade", Font.PLAIN, 70);
         FontMetrics metr = getFontMetrics(big);
@@ -979,7 +854,7 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
-    private void drawGraphicsSettings(Graphics g)
+    public void drawGraphicsSettings(Graphics g)
     {
         Font big = new Font("Karmatic Arcade", Font.PLAIN, 30);
         FontMetrics metr2 = getFontMetrics(big);
@@ -997,7 +872,7 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(sp, (B_WIDTH - metr2.stringWidth(sp)) / 2, 190);
     }
 
-    private void drawSettings(Graphics g)
+    public void drawSettings(Graphics g)
     {
 
         Font big = new Font("Karmatic Arcade", Font.PLAIN, 30);
@@ -1016,7 +891,7 @@ public class Board extends JPanel implements ActionListener {
         
     }
 
-    private void gameOver(Graphics g) {
+    public void gameOver(Graphics g) {
         
         String msg = "Game Over";
         String msg2 = "Score ... "+dots;
@@ -1039,7 +914,7 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
-    private void checkApple() {
+    public void checkApple() {
 
         if ((x[0] == apple_x) && (y[0] == apple_y)) {
 
@@ -1049,7 +924,7 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void move() {
+    public void move() {
 
         //This if statement just checks if any direction is chosen. This will happen if the game is either paused or if it has just started
         if(leftDirection || rightDirection || upDirection || downDirection)
@@ -1085,7 +960,7 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void checkCollision() {
+    public void checkCollision() {
 
         for (int z = dots; z > 0; z--) {
 
@@ -1160,7 +1035,7 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void locateApple() {
+    public void locateApple() {
 
         int r = (int) (Math.random() * fullRand);
         apple_x = ((r * DOT_SIZE));

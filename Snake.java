@@ -1,14 +1,9 @@
-
-
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 public class Snake extends JFrame {
 
     public Snake() {
-        //Here is where we will ask for the stuff! then pass all that into initUI
-        
-        
         initUI(this);
     }
     
