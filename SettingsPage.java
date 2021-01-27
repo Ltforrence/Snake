@@ -301,7 +301,10 @@ public class SettingsPage {
                     startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
                     board.setVals();
                     if(j == 0)
-                        board.initTitle();
+                    {
+                        MainPage mp = new MainPage(board, snake);
+                        mp.initTitle();
+                    }
                     else
                     {
                         VisualPage vp = new VisualPage(board, snake);
