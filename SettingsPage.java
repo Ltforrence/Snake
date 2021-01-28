@@ -302,13 +302,11 @@ public class SettingsPage {
                     board.setVals();
                     if(j == 0)
                     {
-                        MainPage mp = new MainPage(board, snake);
-                        mp.initTitle();
+                        board.initTitle();
                     }
                     else
                     {
-                        VisualPage vp = new VisualPage(board, snake);
-                        vp.initGraphicsSettings();
+                        board.initGraphicsSettings();
                     }
                 }
             });

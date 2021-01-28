@@ -219,8 +219,7 @@ public class MainPage {
                         System.out.println("Here we would init scoreboard!"); //lol nothing yet probably inithighscore or something but not yet!
                     else
                     {
-                        SettingsPage sp = new SettingsPage(board, snake);
-                        sp.initSettings();//only difference from above. Coulda put this in the for loop lol
+                        board.initSettings();
                     }
 
                     nameBox.setVisible(false);

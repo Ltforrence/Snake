@@ -112,13 +112,13 @@ public class Board extends JPanel implements ActionListener {
 
         initPages(); //init all of the files that run the various pages
 
-        mp.initTitle();
+        initTitle();
         
-
         timer = new Timer(fullSpeed, this);
         timer.start();
     }
 
+    //eventually we will not need this!
     public void initPages()
     {
         vp = new VisualPage(this, snake);
@@ -126,138 +126,156 @@ public class Board extends JPanel implements ActionListener {
         mp = new MainPage(this, snake);
     }
 
+    public void initSettings()
+    {
+        sp.initSettings();
+    }
+
+    public void initTitle()
+    {
+        mp.initTitle();
+    }
+    public void initGraphicsSettings()
+    {
+        vp.initGraphicsSettings();
+    }
     
-    public boolean getBoardBorder()
+    public boolean getBoardBorder() //This makes no sense name wise. but get if snake is bordered
     {
         return border;
     }
 
-    public void setBoardBorder(boolean b)
+    public void setBoardBorder(boolean b) //This also makes no sense but same as above 
     {
         border = b;
     }
-    public int getBorderInt()
+    public int getBorderInt()// get snake bordered or not
     {
         return borderInt;
     }
-    public void setBorderInt(int bi)
+    public void setBorderInt(int bi) //set if snake is bordered or borderless the int at least(I know this naming isn't great!)
     {
         borderInt = bi;
     }
-    public int getBWidth()
+    public int getBWidth() //get base board width
     {
         return B_WIDTH;
     }
-    public int getBHeight()
+    public int getBHeight() //get base board height
     {
         return B_HEIGHT;
     }
-    public Color getMainColor()
+    public Color getMainColor() //get the main color setting
     {
         return mainColor;
     }
-    public void setMainColor(Color c)
+    public void setMainColor(Color c) //set main color so all buttons are the same
     {
         mainColor = c;
     }
-    public int getMainColorInt()
+    public int getMainColorInt() //get the main color int (these are needed for the button colors and stuff)
     {
         return mainColorInt;
     }
-    public void setMainColorInt(int mci)
+    public void setMainColorInt(int mci) //set the int of the main color
     {
         mainColorInt = mci;
     }
-    public void setSpeed(int s)
+    public void setSpeed(int s) //set snake speed from settings
     {
         speed = s;
     }
-    public int getSpeed()
+    public int getSpeed() //get snake speed
     {
         return speed;
     }
-    public void setBSize(int bs)
+    public void setBSize(int bs) //set size of game board from settings
     {
         bSize = bs;
     }
-    public int getBSize()
+    public int getBSize() //get size of board
     {
         return bSize;
     }
-    public void setDAdded(int da)
+    public void setDAdded(int da) //set how many dots should be added from settings page
     {
         dAdded = da;
     }
-    public int getDAdded()
+    public int getDAdded() //get how many dots should be added
     {
         return dAdded;
     }
-    public void setName(String n)
+    public void setName(String n) //setting user name for title screen
     {
         name = n;
     }
-    public String getName()
+    public String getName() //get user name 
     {
         return name;
     }
-    public Image getimg5()
+    public Image getimg5()// should rename this but getting the main colored start image
     {
         return img5;
     }
-    public Image getimg6()
+    public Image getimg6() // I should rename this but this is getting the red start image
     {
         return img6;
     }
-    public void inGS() //call when entering graphics settings
+    public void inGS() //setting boolean whe you enter Graphics settings
     {
         inGraphicsSettings = true;
         inSettings = false;
     }
-    public void inS()
+    public void inS() //setting booleans when you enter Settings
     {
         inGraphicsSettings = false;
         inSettings = true;
         inMain = false;
-
     }
-    public void inT()
+    public void inT() // setting booleans when you enter title screen
     {
         inSettings = false;
         inMain = true;
     }
-    public int getXCorner()
+    public void inG() //setting booleans when you enter the game
+    {
+        inGame = true;
+        inMain = false;
+        inSettings = false;
+    }
+    public int getXCorner() //getting x corner of name box in title
     {
         return xCorner;
     }
-    public void setXCorner(int xc)
+    public void setXCorner(int xc) //setting x corner of name box in title
     {
         xCorner = xc;
     }
-    public int getYCorner()
+    public int getYCorner() //get y corner of name box in title
     {
         return yCorner;
     }
-    public void setYCorner(int xc)
+    public void setYCorner(int xc) //setting where the ycorner is of the name box in title
     {
         yCorner = xc;
     }
-    public int getWBox()
+    public int getWBox() //getting the width of box in title
     {
         return wBox;
     }
-    public void setWBox(int xc)
+    public void setWBox(int xc) //setting the width of the box in title
     {
         wBox = xc;
     }
-    public int getHBox()
+    public int getHBox() //getting height of name box in title
     {
         return hBox;
     }
-    public void setHBox(int xc)
+    public void setHBox(int xc) //Setting the height of the name box in Title
     {
         hBox = xc;
     }
-    public void setFirstDot()
+    public void setFirstDot() // This method is for setting the first dot in the title page! really need this because it depends on if there is a name inserted!
     {
         x = new int[100]; //uhh setting it to this shouldn't mess it up??? hahah we will see. just need to make sure to call init values pretty often!
         y = new int[100];
@@ -275,7 +293,7 @@ public class Board extends JPanel implements ActionListener {
 
     
 
-    public void setVals()
+    public void setVals() //So currently this is needed to set the vals for the real board
     {
         fullWidth = 300 + 40*(bSize);
         fullHeight = 300 + 40*(bSize);
@@ -286,17 +304,15 @@ public class Board extends JPanel implements ActionListener {
         y = new int[fullDots];
     }
     
+    //actually init the board and start the game here!
     public void initBoard() {
         
-
+        inG(); //call in g to set all of the booleans
         //These need to be reset for when I restart the game
         leftDirection = false;
         rightDirection = false;
         upDirection = false;
         downDirection = false;
-        inGame = true;
-        inMain = false;
-        inSettings = false;
         nextDir = new LinkedList<>(); 
         gameNum++;
         this.revalidate();
@@ -420,6 +436,8 @@ public class Board extends JPanel implements ActionListener {
             gameOver(g);
         } 
     }
+
+
     public void drawMain(Graphics g)
     {
         Font big = new Font("Karmatic Arcade", Font.PLAIN, 70);
@@ -451,11 +469,6 @@ public class Board extends JPanel implements ActionListener {
     {
         Font big = new Font("Karmatic Arcade", Font.PLAIN, 30);
         FontMetrics metr2 = getFontMetrics(big);
-        
-
-        
-
-
         String c = "Color";
         g.setColor(Color.white);
         g.setFont(big);
@@ -483,7 +496,6 @@ public class Board extends JPanel implements ActionListener {
 
         
     }
-
     public void gameOver(Graphics g) {
         
         String msg = "Game Over";
@@ -501,10 +513,6 @@ public class Board extends JPanel implements ActionListener {
         //28 should be double the font size and make it just doublespaced above it
         g.setFont(small);
         g.drawString(msg2, (fullWidth - metr2.stringWidth(msg2)) / 2, fullHeight / 2 + 56);
-
-        
-        
-
     }
 
     public void checkApple() {
@@ -611,7 +619,7 @@ public class Board extends JPanel implements ActionListener {
                     inMain = false;
                     inGraphicsSettings = false;
                     inSettings = true;
-                    sp.initSettings();
+                    initSettings();
                     button.setVisible(false); //gotta make it invisible so that after next game another can be added instead
                     button2.setVisible(false); //gotta make it invisible so that after next game another can be added instead
                 }

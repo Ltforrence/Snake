@@ -111,8 +111,7 @@ public class VisualPage {
                 //inGraphicsSettings = false;
                 board.setVals();
                 board.loadImages();
-                SettingsPage sp = new SettingsPage(board, snake);
-                sp.initSettings();
+                board.initSettings();
             }
         });
     }
