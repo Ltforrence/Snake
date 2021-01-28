@@ -24,7 +24,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.io.*; // for file stuff lol
 
-public class VisualPage {
+public class VisualPage extends JPanel implements ActionListener{
 
     private String[] colorOptions = {"Green", "Orange", "Pink", "Purple", "Blue", "Yellow"}; //need to make these custom objects I guess? not 100 percent though lol. Then I can pass it into the button and have the object also contain the color object? maybe I could just make this whole thing a dict/hash table there are better ways than what I am doing.
     private Color[] colorObjs = {Color.green, new Color(250,161,95), new Color(247,123,225), new Color(204,100,247), new Color(100,245,223), new Color(253,255,95)};
@@ -38,30 +38,36 @@ public class VisualPage {
     private int B_WIDTH;
     private int B_HEIGHT;
 
+    private Timer timer;
 
 
     public VisualPage(Board b, Snake s)
     {
         snake = s;
         board = b;
-        //initGraphicsSettings();
+
+        timer = new Timer(140 - board.getSpeed()*20, this);
+        timer.start();
+
+        initGraphicsSettings();
     }
 
     public void initGraphicsSettings()
     {
-        board.inGS();
-        //will have a call here to set where we are so that the graphics paints
-        //inGraphicsSettings = true;
-        //inSettings = false;
-        //if you don't add the next 3 lines it wont change the top line to say color lol. Some sort of java compiler issue goin on here. Never seen this before.
-        //setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
-        //snake.setSize(B_WIDTH, B_HEIGHT);
         B_HEIGHT = board.getBHeight();
         B_WIDTH = board.getBWidth();
+        
+        setBackground(Color.black);
+        setFocusable(true);
+        board.loadImages();
+        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
+        snake.setSize(B_WIDTH, B_HEIGHT);
+        revalidate();
+        setLayout(null);
         snake.pack();
 
         Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
-        FontMetrics metr = board.getFontMetrics(KA);
+        FontMetrics metr = getFontMetrics(KA);
 
         addColorButtons(KA, metr);
         addBorderButtons(KA, metr);
@@ -75,12 +81,12 @@ public class VisualPage {
         gSettings.setFocusable(false);
 
         gSettings.setFont(KA);
-        
-        gSettings.setBounds(B_WIDTH/4 - metr.stringWidth(text)/2, B_HEIGHT - 50, metr.stringWidth(text), 20);
+
+        gSettings.setBounds(B_WIDTH/4 - metr.stringWidth(text)/2, B_HEIGHT-50, metr.stringWidth(text), 20);
 
         gSettings.setForeground(Color.white);
 
-        board.add(gSettings);
+        this.add(gSettings);
         gSettings.setVisible(true);
 
         gSettings.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -108,8 +114,6 @@ public class VisualPage {
                         setBorder[i].setVisible(false);
                         
                 }
-                //inGraphicsSettings = false;
-                board.setVals();
                 board.loadImages();
                 board.initSettings();
             }
@@ -147,7 +151,7 @@ public class VisualPage {
                 colorButtons[i].setForeground(Color.white);
 
 
-            board.add(colorButtons[i]);
+            add(colorButtons[i]);
             colorButtons[i].setVisible(true);
 
             colorButtons[i].addActionListener(new ActionListener() {
@@ -188,7 +192,7 @@ public class VisualPage {
             
             setBorder[i].setBounds(B_WIDTH/4*(2*i+1) - metr.stringWidth(text)/2, 220, metr.stringWidth(text), 20);
 
-            board.add(setBorder[i]);
+            add(setBorder[i]);
             setBorder[i].setVisible(true);
 
             
@@ -226,6 +230,40 @@ public class VisualPage {
 
 
     }
+
+
+    
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        doDrawing(g);
+    }
+    
+    public void doDrawing(Graphics g) {
+
+            drawGraphicsSettings(g);
+    }
+
+    public void drawGraphicsSettings(Graphics g)
+    {
+        Font big = new Font("Karmatic Arcade", Font.PLAIN, 30);
+        FontMetrics metr2 = getFontMetrics(big);
+        String c = "Color";
+        g.setColor(Color.white);
+        g.setFont(big);
+        g.drawString(c, (B_WIDTH - metr2.stringWidth(c)) / 2, 30); // lol java compiler broke... This is literally insane hahaha never found a bug like this. 
+
+        String sp = "Styles"; // under here is where connected/unconnected goes!
+        g.drawString(sp, (B_WIDTH - metr2.stringWidth(sp)) / 2, 190);
+    }
+
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        repaint();
+    }
+
 
     
 }

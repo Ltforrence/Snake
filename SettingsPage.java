@@ -24,7 +24,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.io.*; // for file stuff lol
 
-public class SettingsPage {
+public class SettingsPage extends JPanel implements ActionListener{
 
     private Board board;
     private Snake snake;
@@ -40,26 +40,37 @@ public class SettingsPage {
     private int B_WIDTH;
     private int B_HEIGHT;
 
+    private Timer timer;
+
     public SettingsPage(Board b, Snake s)
     {
         board = b;
         snake = s;
+
+        timer = new Timer(140 - board.getSpeed()*20, this);
+        timer.start();
+
+        initSettings();
     }
 
     public void initSettings()
     {
-
-        board.inS();
-
         B_HEIGHT = board.getBHeight();
         B_WIDTH = board.getBWidth();
-        //setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
+
+        setBackground(Color.black);
+        setFocusable(true);
+        board.loadImages();
+        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         snake.setSize(B_WIDTH, B_HEIGHT);
         snake.pack();
+        revalidate();
+        setLayout(null);
+       
         
         
         Font KA = new Font("Karmatic Arcade", Font.PLAIN, 20); 
-        FontMetrics metr = board.getFontMetrics(KA);
+        FontMetrics metr = getFontMetrics(KA);
 
         addSizeButtons(KA, metr);
         addSpeedButtons(KA, metr);
@@ -95,15 +106,15 @@ public class SettingsPage {
                     }
                 }
                 startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
-                board.setVals();
+                
                 board.initBoard();
 
             }
         });
-        board.setLayout(null);
-        board.add(startSettings);
+        setLayout(null);
+        add(startSettings);
         startSettings.setVisible(true);
-        board.revalidate();
+        revalidate();
         
     }
 
@@ -134,7 +145,7 @@ public class SettingsPage {
             setSize[i].setText(num);
             setSize[i].setBounds(B_WIDTH/40 * (3*i + 6), 60, metr.stringWidth(num), 20);
 
-            board.add(setSize[i]);
+            add(setSize[i]);
             setSize[i].setVisible(true);
 
             setSize[i].addActionListener(new ActionListener() {
@@ -177,7 +188,7 @@ public class SettingsPage {
             setDots[i].setText(num);
             setDots[i].setBounds(B_WIDTH/40 * (4*i + 12), 260, metr.stringWidth(num), 20);
 
-            board.add(setDots[i]);
+            this.add(setDots[i]);
             setDots[i].setVisible(true);
 
             setDots[i].addActionListener(new ActionListener() {
@@ -218,7 +229,7 @@ public class SettingsPage {
             setSpeed[i].setText(num);
             setSpeed[i].setBounds(B_WIDTH/40 * (4*i + 12), 160, metr.stringWidth(num), 20);
 
-            board.add(setSpeed[i]);
+            add(setSpeed[i]);
             setSpeed[i].setVisible(true);
 
             setSpeed[i].addActionListener(new ActionListener() {
@@ -262,7 +273,7 @@ public class SettingsPage {
 
             moreSettings[i].setForeground(Color.white);
 
-            board.add(moreSettings[i]);
+            add(moreSettings[i]);
             moreSettings[i].setVisible(true);
 
             moreSettings[i].addMouseListener(new java.awt.event.MouseAdapter() {
@@ -299,7 +310,7 @@ public class SettingsPage {
                         }
                     }
                     startSettings.setVisible(false); //gotta make it invisible so that after next game another can be added instead
-                    board.setVals();
+                    
                     if(j == 0)
                     {
                         board.initTitle();
@@ -314,6 +325,44 @@ public class SettingsPage {
         
         
 
+    }
+
+    
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        doDrawing(g);
+    }
+    
+    public void doDrawing(Graphics g) {
+
+        drawSettings(g);
+        
+    }
+
+
+    public void drawSettings(Graphics g)
+    {
+
+        Font big = new Font("Karmatic Arcade", Font.PLAIN, 30);
+        FontMetrics metr2 = getFontMetrics(big);
+        String si = "Size";
+        g.setColor(Color.white);
+        g.setFont(big);
+        g.drawString(si, (B_WIDTH - metr2.stringWidth(si)) / 2, 30); //30 is where it puts the middle of the string vertical wise. Only needs to be 15 I guess?
+
+        String sp = "Speed";
+        g.drawString(sp, (B_WIDTH - metr2.stringWidth(sp)) / 2, 130);
+
+        String d = "Dots";
+        g.drawString(d, (B_WIDTH - metr2.stringWidth(d)) / 2, 230);
+
+        
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        repaint();
     }
 
     
