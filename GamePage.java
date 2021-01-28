@@ -100,10 +100,8 @@ public class GamePage extends JPanel implements ActionListener{
         setFocusable(true);
         board.loadImages();
         setPreferredSize(new Dimension(fullWidth, fullHeight));
-        System.out.println(fullWidth+ "  "+fullHeight);
         snake.setSize(fullWidth, fullHeight);
         snake.pack();
-        //revalidate();
         
         
         
@@ -114,12 +112,15 @@ public class GamePage extends JPanel implements ActionListener{
         downDirection = false;
         nextDir = new LinkedList<>(); 
         gameNum++;
-        revalidate();
         loadImages(); //reload images because settings have been set now!
 
-        System.out.println(gameNum);
-        if(gameNum == 1)
-            addKeyListener(new TAdapter());
+        //System.out.println(gameNum);
+        TAdapter k = new TAdapter();
+        addKeyListener(k);
+
+        this.revalidate();
+        
+        initGame();
     }
 
 
@@ -399,7 +400,6 @@ public class GamePage extends JPanel implements ActionListener{
         }
         
         if (!inGame) {
-            //timer.stop();
             //Eventually I would like the user to be able to scale game size, so I would like to scale this image with the game
             //JButton button = new JButton(new ImageIcon(((new ImageIcon("images/pic.jpg")).getImage()).getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH))); //(in one line if you want to do that later)
             //scale images (from this thread. plus there is a link to another site in the thread I used https://stackoverflow.com/questions/2856480/resizing-a-imageicon-in-a-jbutton)
