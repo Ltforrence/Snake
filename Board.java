@@ -87,24 +87,28 @@ public class Board{
         sp = new SettingsPage(this, snake);
         snake.getContentPane().removeAll(); // this might work? we shall see!
         snake.getContentPane().add(sp);
+        snake.pack();
     }
     public void initTitle()
     {
         mp = new MainPage(this, snake);
         snake.getContentPane().removeAll(); // this might work? we shall see!
         snake.getContentPane().add(mp);
+        snake.pack();
     }
     public void initGraphicsSettings()
     {
         vp = new VisualPage(this, snake);
         snake.getContentPane().removeAll(); // this might work? we shall see!
         snake.getContentPane().add(vp);
+        snake.pack();
     }
     public void initBoard()
     {
         gp = new GamePage(this, snake);
         snake.getContentPane().removeAll(); // this might work? we shall see!
         snake.getContentPane().add(gp);
+        snake.pack();
     }
 
 

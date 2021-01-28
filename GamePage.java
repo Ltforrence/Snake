@@ -96,15 +96,16 @@ public class GamePage extends JPanel implements ActionListener{
 
     public void initBoard() {
         inGame = true;
-
-        
         setBackground(Color.black);
         setFocusable(true);
         board.loadImages();
-        setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
-        snake.setSize(B_WIDTH, B_HEIGHT);
+        setPreferredSize(new Dimension(fullWidth, fullHeight));
+        System.out.println(fullWidth+ "  "+fullHeight);
+        snake.setSize(fullWidth, fullHeight);
         snake.pack();
-        revalidate();
+        //revalidate();
+        
+        
         
         //These need to be reset for when I restart the game
         leftDirection = false;
@@ -119,15 +120,6 @@ public class GamePage extends JPanel implements ActionListener{
         System.out.println(gameNum);
         if(gameNum == 1)
             addKeyListener(new TAdapter());
-        setBackground(Color.black);
-        setFocusable(true);
-
-        setPreferredSize(new Dimension(fullWidth, fullHeight));
-        snake.setSize(fullWidth, fullHeight);
-        snake.pack();
-        revalidate();
-        initGame();
-        
     }
 
 
