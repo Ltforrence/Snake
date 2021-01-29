@@ -108,6 +108,7 @@ public class Board{
         gp = new GamePage(this, snake);
         snake.getContentPane().removeAll(); // this might work? we shall see!
         snake.getContentPane().add(gp);
+        gp.requestFocus();
         snake.pack();
     }
 
