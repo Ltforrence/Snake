@@ -49,7 +49,6 @@ public class GamePage extends JPanel implements ActionListener{
     private int toBeAdded = 0;
 
 
-
     //images we need here
     private Image ball;
     private Image apple;
@@ -114,9 +113,6 @@ public class GamePage extends JPanel implements ActionListener{
         
         setBackground(Color.black);
         setFocusable(true);
-        requestFocus();
-        //Component.requestFocusinWindow();
-        //board.loadImages();
         setPreferredSize(new Dimension(fullWidth, fullHeight));
         snake.setSize(fullWidth, fullHeight);
         snake.pack();

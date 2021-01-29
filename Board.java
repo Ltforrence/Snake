@@ -24,6 +24,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.io.*; // for file stuff lol
 
+
 public class Board{
 
     private final int B_WIDTH = 460; //these are now base width and base height
@@ -32,28 +33,21 @@ public class Board{
     private final int RAND_POS = 14; // Had to change this to 39 because now the board is 40 x 40
 
     private Image ball;
-    private Image apple;
-    private Image head;
-    private Image img;
-    private Image img2;
-    private Image img3;
-    private Image img4;
     private Image img5;
     private Image img6;
+    private Image head;
     private Snake snake;
-    private int fullRand;
-    private int fullDots;
-    private int fullSpeed = 100; //set it to this to start! but it will be reset later
 
-    private int toBeAdded = 0;
 
+    
+    //This is for storing most recent settings for the user!
+    private SettingsFile sf;
+
+    private UserSettings[] us;
 
     //wanted to do this as an enum but no way to get string values in that case :(
     private String[][] snakeImages = {{"Images/dotbig.png", "Images/orangedot.png", "Images/pinkborder.png", "Images/purpledot.png", "Images/bluedot.png", "Images/yellowdot.png"},{"Images/dotnoborder.png","Images/orangedot2.png", "Images/pinknoborder.png", "Images/purpledotnoborder.png", "Images/bluedot2.png", "Images/yellowdot2.png"}};
     private String[] startImages = {"Images/startgreen.png","Images/startOrange.png", "Images/startpink.png", "Images/startpurple.png", "Images/startblue.png", "Images/startyellow.png"};
-    private String[] restartImages = {"Images/restart.png", "Images/restartOrange.png", "Images/restartpink.png", "Images/restartpurple.png", "Images/restartblue.png", "Images/restartyellow.png"};
-    private String[] settingsImages = {"Images/SettingsGreen.png", "Images/SettingsOrange.png", "Images/Settingspink.png", "Images/SettingsPurple.png", "Images/SettingsBlue.png", "Images/SettingsYellow.png"};
-
 
 
     //User Settings
@@ -76,6 +70,8 @@ public class Board{
         snake = s;
 
         initTitle();
+
+        sf = new SettingsFile("Settings/users.csv");
     }
 
     //This inits the objects for each of these pages!. fun!
@@ -218,31 +214,8 @@ public class Board{
         ImageIcon iih = new ImageIcon(snakeImages[borderInt][mainColorInt]);
         head = iih.getImage();
 
-        if(border)
-        {
-            ImageIcon iia = new ImageIcon("Images/headnoborder.png");
-            apple = iia.getImage();
-        }
-        else
-        {
-            ImageIcon iia = new ImageIcon("Images/headbig.png");
-            apple = iia.getImage();
-        }
-
-        ImageIcon icon = new ImageIcon(restartImages[mainColorInt]);
-        img = icon.getImage();  
-
-        ImageIcon icon2 = new ImageIcon("Images/restartred.png");
-        img2 = icon2.getImage(); 
-
-        ImageIcon icon3 = new ImageIcon(settingsImages[mainColorInt]);
-        img3 = icon3.getImage();  
-
-        ImageIcon icon4 = new ImageIcon("Images/Settingsred.png");
-        img4 = icon4.getImage();
-
         ImageIcon icon5 = new ImageIcon(startImages[mainColorInt]);
-        img5 = icon5.getImage();  
+        img5 = icon5.getImage();
 
         ImageIcon icon6 = new ImageIcon("Images/startred.png");
         img6 = icon6.getImage();
